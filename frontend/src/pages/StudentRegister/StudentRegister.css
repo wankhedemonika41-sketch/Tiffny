@@ -1,0 +1,550 @@
+/* ========================================
+   STUDENT REGISTRATION
+======================================== */
+
+.student-register-page {
+  min-height: 100vh;
+
+  display: grid;
+
+  grid-template-columns: 43% 57%;
+
+  background: #fffaf3;
+}
+
+
+/* ========================================
+   LEFT BRAND
+======================================== */
+
+.student-register-brand {
+  position: relative;
+
+  overflow: hidden;
+
+  padding: 45px 8%;
+
+  background:
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(232, 123, 50, 0.25),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      #173f33,
+      #245c4a
+    );
+
+  color: white;
+}
+
+
+.student-register-brand::before {
+  content: "";
+
+  position: absolute;
+
+  width: 400px;
+  height: 400px;
+
+  right: -200px;
+  bottom: -180px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  border-radius: 50%;
+}
+
+
+.student-register-brand::after {
+  content: "";
+
+  position: absolute;
+
+  width: 250px;
+  height: 250px;
+
+  right: -80px;
+  bottom: -100px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  border-radius: 50%;
+}
+
+
+/* ========================================
+   BACK BUTTON
+======================================== */
+
+.register-back-button {
+  position: relative;
+
+  z-index: 2;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 8px 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #c5d8cf;
+
+  font-size: 13px;
+
+  cursor: pointer;
+
+  transition: 0.25s ease;
+}
+
+.register-back-button span {
+  font-size: 18px;
+}
+
+.register-back-button:hover {
+  color: white;
+
+  transform: translateX(-3px);
+}
+
+
+/* ========================================
+   BRAND CONTENT
+======================================== */
+
+.student-register-brand-content {
+  position: relative;
+
+  z-index: 2;
+
+  margin-top: 75px;
+}
+
+.register-brand-mark {
+  width: 55px;
+  height: 55px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 15px;
+
+  background: #e87b32;
+
+  color: white;
+
+  font-size: 25px;
+
+  font-weight: 800;
+}
+
+.register-brand-name {
+  margin: 12px 0 0;
+
+  font-size: 22px;
+
+  font-weight: 800;
+}
+
+
+.student-register-brand-content h1 {
+  margin: 55px 0 20px;
+
+  font-size: clamp(45px, 5vw, 68px);
+
+  line-height: 0.98;
+
+  letter-spacing: -3px;
+}
+
+.student-register-brand-content h1 span {
+  display: block;
+
+  color: #f2a268;
+}
+
+
+.register-brand-description {
+  max-width: 460px;
+
+  color: #c5d8cf;
+
+  font-size: 14px;
+
+  line-height: 1.8;
+}
+
+
+/* ========================================
+   POINTS
+======================================== */
+
+.register-points {
+  margin-top: 55px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 15px;
+}
+
+.register-point {
+  display: flex;
+
+  align-items: center;
+
+  gap: 15px;
+}
+
+.register-point span {
+  color: #f2a268;
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  letter-spacing: 1px;
+}
+
+.register-point p {
+  margin: 0;
+
+  color: #d9e5df;
+
+  font-size: 12px;
+}
+
+
+/* ========================================
+   RIGHT SECTION
+======================================== */
+
+.student-register-form-section {
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  padding: 60px;
+}
+
+.student-register-container {
+  width: 100%;
+
+  max-width: 500px;
+}
+
+
+/* ========================================
+   HEADING
+======================================== */
+
+.register-heading {
+  margin-bottom: 32px;
+}
+
+.register-heading > span {
+  color: #e87b32;
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  letter-spacing: 2px;
+}
+
+.register-heading h2 {
+  margin: 12px 0 8px;
+
+  color: #1d2421;
+
+  font-size: 38px;
+
+  letter-spacing: -1.5px;
+}
+
+.register-heading p {
+  margin: 0;
+
+  color: #7d8781;
+
+  font-size: 13px;
+}
+
+
+/* ========================================
+   FORM
+======================================== */
+
+.register-form {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 20px;
+}
+
+.register-form-group {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.register-form-group:nth-child(1),
+.register-form-group:nth-child(2),
+.register-form-group:nth-child(5) {
+  grid-column: span 2;
+}
+
+.register-form-group label {
+  color: #303a35;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+
+.register-form-group input {
+  width: 100%;
+
+  height: 50px;
+
+  box-sizing: border-box;
+
+  padding: 0 15px;
+
+  border: 1px solid #ddd9d1;
+
+  border-radius: 8px;
+
+  outline: none;
+
+  background: white;
+
+  color: #1d2421;
+
+  font-size: 13px;
+
+  transition: 0.25s ease;
+}
+
+.register-form-group input::placeholder {
+  color: #a4aaa5;
+}
+
+.register-form-group input:focus {
+  border-color: #245c4a;
+
+  box-shadow:
+    0 0 0 3px rgba(36, 92, 74, 0.08);
+}
+
+
+/* ========================================
+   PASSWORD
+======================================== */
+
+.register-password-wrapper {
+  position: relative;
+}
+
+.register-password-wrapper input {
+  padding-right: 65px;
+}
+
+.register-password-toggle {
+  position: absolute;
+
+  right: 13px;
+
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  border: none;
+
+  background: transparent;
+
+  color: #245c4a;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* ========================================
+   SUBMIT
+======================================== */
+
+.register-submit-button {
+  grid-column: span 2;
+
+  height: 54px;
+
+  margin-top: 5px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 18px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #e87b32;
+
+  color: white;
+
+  font-size: 13px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 10px 25px rgba(232, 123, 50, 0.18);
+
+  transition: 0.25s ease;
+}
+
+.register-submit-button:hover {
+  background: #d96c25;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 15px 30px rgba(232, 123, 50, 0.25);
+}
+
+.register-submit-button span {
+  font-size: 18px;
+}
+
+
+/* ========================================
+   ALREADY ACCOUNT
+======================================== */
+
+.already-account {
+  margin-top: 25px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+}
+
+.already-account p {
+  margin: 0;
+
+  color: #7d8781;
+
+  font-size: 11px;
+}
+
+.already-account button {
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #245c4a;
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.already-account button:hover {
+  color: #e87b32;
+}
+
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 950px) {
+
+  .student-register-page {
+    grid-template-columns: 1fr;
+  }
+
+  .student-register-brand {
+    min-height: 500px;
+
+    padding: 40px 7%;
+  }
+
+  .student-register-brand-content {
+    margin-top: 55px;
+  }
+
+  .student-register-form-section {
+    padding: 60px 30px;
+  }
+}
+
+
+@media (max-width: 550px) {
+
+  .student-register-brand {
+    min-height: 450px;
+
+    padding: 30px 25px;
+  }
+
+  .student-register-brand-content h1 {
+    font-size: 44px;
+  }
+
+  .student-register-form-section {
+    padding: 50px 20px;
+  }
+
+  .register-form {
+    grid-template-columns: 1fr;
+  }
+
+  .register-form-group:nth-child(1),
+  .register-form-group:nth-child(2),
+  .register-form-group:nth-child(5) {
+    grid-column: span 1;
+  }
+
+  .register-submit-button {
+    grid-column: span 1;
+  }
+
+  .already-account {
+    flex-direction: column;
+  }
+}

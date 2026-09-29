@@ -1,0 +1,1010 @@
+/* =========================================================
+   GENERAL
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+.mess-profile-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 42% 58%;
+  background: #f8f7f3;
+  color: #102d2b;
+}
+
+/* =========================================================
+   LEFT INFORMATION SECTION
+========================================================= */
+
+.mess-profile-info {
+  min-height: 100vh;
+  background: linear-gradient(
+    145deg,
+    #104d3b,
+    #175f49,
+    #355d35
+  );
+  color: white;
+  padding: 42px 58px;
+  position: relative;
+  overflow: hidden;
+}
+
+.mess-profile-info::before {
+  content: "";
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  right: -180px;
+  bottom: -130px;
+}
+
+.mess-profile-info::after {
+  content: "";
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  right: -80px;
+  bottom: -70px;
+}
+
+.mess-profile-back {
+  border: none;
+  background: transparent;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.mess-profile-back span {
+  font-size: 24px;
+}
+
+.mess-profile-info-content {
+  position: relative;
+  z-index: 2;
+  margin-top: 105px;
+  max-width: 540px;
+}
+
+.mess-profile-brand {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 65px;
+}
+
+.mess-profile-brand-mark {
+  width: 45px;
+  height: 45px;
+  background: #f18a3c;
+  color: white;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 23px;
+  font-weight: 800;
+}
+
+.mess-profile-brand span {
+  font-size: 27px;
+  font-weight: 800;
+}
+
+.mess-profile-label {
+  color: #f18a3c;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 18px;
+}
+
+.mess-profile-info h1 {
+  font-size: clamp(48px, 5vw, 70px);
+  line-height: 0.98;
+  letter-spacing: -2px;
+  margin: 0;
+}
+
+.mess-profile-info h1 span {
+  color: #f18a3c;
+}
+
+.mess-profile-description {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 16px;
+  line-height: 1.7;
+  max-width: 510px;
+  margin-top: 30px;
+}
+
+.mess-profile-steps {
+  margin-top: 55px;
+}
+
+.mess-profile-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.mess-step-number {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f18a3c;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.mess-profile-step h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+
+.mess-profile-step p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+}
+
+/* =========================================================
+   FORM SECTION
+========================================================= */
+
+.mess-profile-form-section {
+  min-height: 100vh;
+  background: #f8f7f3;
+  padding: 75px 7%;
+  overflow-y: auto;
+}
+
+.mess-profile-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.mess-profile-heading {
+  margin-bottom: 55px;
+}
+
+.mess-profile-heading > span {
+  color: #df7026;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.mess-profile-heading h2 {
+  font-size: 39px;
+  letter-spacing: -1.5px;
+  margin: 10px 0 8px;
+}
+
+.mess-profile-heading p {
+  color: #697a77;
+  margin: 0;
+  font-size: 15px;
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.mess-profile-form {
+  width: 100%;
+}
+
+.mess-profile-section-title {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  border-bottom: 1px solid #e1e5df;
+  padding-bottom: 18px;
+  margin-bottom: 27px;
+  margin-top: 40px;
+}
+
+.mess-profile-section-title > span {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: #edf4ee;
+  color: #236347;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.mess-profile-section-title h3 {
+  margin: 0 0 4px;
+  font-size: 17px;
+}
+
+.mess-profile-section-title p {
+  margin: 0;
+  color: #8b9693;
+  font-size: 13px;
+}
+
+.mess-profile-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.mess-profile-field {
+  margin-bottom: 24px;
+}
+
+.mess-profile-field label {
+  display: block;
+  margin-bottom: 9px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.mess-profile-field input,
+.mess-profile-field textarea {
+  width: 100%;
+  border: 1px solid #dfe3dd;
+  background: white;
+  border-radius: 11px;
+  padding: 15px 16px;
+  font-family: inherit;
+  font-size: 14px;
+  color: #18312e;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+.mess-profile-field input {
+  height: 52px;
+}
+
+.mess-profile-field textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.5;
+}
+
+.mess-profile-field input:focus,
+.mess-profile-field textarea:focus {
+  border-color: #2b7555;
+  box-shadow: 0 0 0 3px rgba(43, 117, 85, 0.08);
+}
+
+.mess-profile-field input::placeholder,
+.mess-profile-field textarea::placeholder {
+  color: #a5aeab;
+}
+
+/* =========================================================
+   UPLOAD SECTION
+========================================================= */
+
+.mess-upload-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.mess-upload-box {
+  background: white;
+  border: 1px dashed #cbd5ce;
+  border-radius: 14px;
+  padding: 28px 22px;
+  text-align: center;
+  min-height: 275px;
+}
+
+.mess-upload-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: #edf4ee;
+  color: #1f6549;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 17px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.mess-upload-box h3 {
+  margin: 0 0 8px;
+  font-size: 17px;
+}
+
+.mess-upload-box > p {
+  color: #7d8985;
+  font-size: 13px;
+  line-height: 1.5;
+  min-height: 38px;
+}
+
+.mess-upload-button,
+.mess-change-file-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #216247;
+  color: white;
+  border: none;
+  border-radius: 9px;
+  padding: 11px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 5px;
+  transition: 0.2s ease;
+}
+
+.mess-upload-button:hover,
+.mess-change-file-button:hover {
+  background: #174c38;
+}
+
+.mess-upload-box small {
+  display: block;
+  color: #a0aaa6;
+  font-size: 11px;
+  margin-top: 15px;
+}
+
+.selected-file {
+  color: #236347;
+  font-size: 12px;
+  font-weight: 700;
+  word-break: break-word;
+  margin: 12px 0 8px;
+}
+
+/* =========================================================
+   FILE PREVIEW
+========================================================= */
+
+.mess-file-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mess-image-preview,
+.mess-proof-image-preview {
+  width: 100%;
+  height: 125px;
+  object-fit: cover;
+  border-radius: 9px;
+  margin-bottom: 10px;
+  border: 1px solid #e0e4df;
+}
+
+.mess-pdf-preview {
+  width: 100%;
+  height: 125px;
+  border-radius: 9px;
+  background: #f5f6f4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.mess-pdf-icon {
+  font-size: 20px;
+  font-weight: 800;
+  color: #c95b2b;
+}
+
+.mess-pdf-preview p {
+  font-size: 12px;
+  color: #66736f;
+}
+
+.mess-view-proof-button {
+  border: 1px solid #236347;
+  background: white;
+  color: #236347;
+  border-radius: 8px;
+  padding: 9px 14px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 5px;
+  margin-bottom: 8px;
+}
+
+.mess-view-proof-button:hover {
+  background: #edf4ee;
+}
+
+/* =========================================================
+   INFORMATION BOX
+========================================================= */
+
+.mess-profile-info-box {
+  margin-top: 30px;
+  padding: 17px;
+  border: 1px solid #eadfcb;
+  background: #fff9ef;
+  border-radius: 12px;
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
+}
+
+.mess-info-symbol {
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: #ee9a4b;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.mess-profile-info-box strong {
+  font-size: 13px;
+}
+
+.mess-profile-info-box p {
+  margin: 6px 0 0;
+  color: #777b73;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   FORM BUTTONS
+========================================================= */
+
+.mess-form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.mess-profile-submit {
+  flex: 1;
+  height: 56px;
+  border: none;
+  border-radius: 11px;
+  background: #df7629;
+  color: white;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 13px;
+}
+
+.mess-profile-submit:hover {
+  background: #c96520;
+}
+
+.mess-profile-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.mess-profile-submit span {
+  font-size: 20px;
+}
+
+.mess-cancel-button {
+  min-width: 130px;
+  height: 56px;
+  border: 1px solid #d5dcd6;
+  background: white;
+  color: #21423b;
+  border-radius: 11px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mess-cancel-button:hover {
+  background: #f1f4f1;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.mess-profile-loading {
+  min-height: 100vh;
+  background: #f8f7f3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+}
+
+.mess-loading-box {
+  width: min(500px, 100%);
+  background: white;
+  border: 1px solid #e2e5df;
+  border-radius: 18px;
+  padding: 45px;
+  text-align: center;
+}
+
+.mess-loading-box h2 {
+  margin: 20px 0 8px;
+  color: #153b35;
+}
+
+.mess-loading-box p {
+  color: #77827f;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.mess-loading-line {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #e3ebe5;
+  border-top-color: #df7629;
+  border-radius: 50%;
+  margin: auto;
+  animation: messSpin 0.8s linear infinite;
+}
+
+@keyframes messSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   EXISTING PROFILE VIEW PAGE
+========================================================= */
+
+.mess-profile-view-page {
+  min-height: 100vh;
+  background: #f7f7f3;
+  color: #173631;
+}
+
+.mess-profile-view-header {
+  height: 80px;
+  background: white;
+  border-bottom: 1px solid #e3e6e1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5%;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.mess-profile-view-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.mess-profile-view-brand-mark {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #f18a3c;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 21px;
+}
+
+.mess-profile-view-brand span {
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.mess-profile-view-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mess-header-button,
+.mess-header-edit-button {
+  height: 42px;
+  padding: 0 18px;
+  border-radius: 9px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mess-header-button {
+  border: 1px solid #dce2dd;
+  background: white;
+  color: #24453e;
+}
+
+.mess-header-edit-button {
+  border: none;
+  background: #df7629;
+  color: white;
+}
+
+.mess-profile-view-container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 60px 5% 80px;
+}
+
+.mess-profile-view-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 30px;
+  margin-bottom: 35px;
+}
+
+.mess-profile-view-label,
+.mess-card-label {
+  color: #df7629;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.mess-profile-view-heading h1 {
+  font-size: 43px;
+  letter-spacing: -1.5px;
+  margin: 9px 0 7px;
+}
+
+.mess-profile-view-heading p {
+  color: #77827f;
+  margin: 0;
+}
+
+.mess-status-badge {
+  padding: 10px 17px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.mess-status-badge.pending {
+  background: #fff0db;
+  color: #d76e21;
+}
+
+.mess-status-badge.approved {
+  background: #e4f4e9;
+  color: #247047;
+}
+
+.mess-status-badge.rejected {
+  background: #fbe6e3;
+  color: #b64e42;
+}
+
+.mess-status-badge.suspended {
+  background: #eee8e4;
+  color: #665951;
+}
+
+.mess-profile-view-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 24px;
+}
+
+.mess-profile-image-card,
+.mess-profile-details-card,
+.mess-verification-card,
+.mess-proof-view-card {
+  background: white;
+  border: 1px solid #e1e5df;
+  border-radius: 16px;
+}
+
+.mess-profile-image-card {
+  padding: 22px;
+}
+
+.mess-existing-image {
+  width: 100%;
+  height: 350px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-top: 15px;
+}
+
+.mess-no-image {
+  height: 350px;
+  margin-top: 15px;
+  background: #f1f4f0;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8a9591;
+}
+
+.mess-profile-details-card {
+  padding: 28px;
+}
+
+.mess-profile-details-card h2 {
+  font-size: 29px;
+  margin: 12px 0 22px;
+}
+
+.mess-detail-item {
+  border-top: 1px solid #edf0ec;
+  padding: 16px 0;
+}
+
+.mess-detail-item span {
+  display: block;
+  color: #8b9692;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 7px;
+}
+
+.mess-detail-item p {
+  margin: 0;
+  color: #304943;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.mess-verification-card {
+  margin-top: 24px;
+  padding: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.mess-verification-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: #edf4ee;
+  color: #27664c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.mess-verification-content > span {
+  color: #8b9692;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.mess-verification-content h2 {
+  margin: 5px 0 5px;
+  font-size: 22px;
+}
+
+.mess-verification-content h2 strong {
+  color: #df7629;
+}
+
+.mess-verification-content p {
+  color: #788580;
+  margin: 0;
+  font-size: 13px;
+}
+
+.mess-proof-view-card {
+  margin-top: 24px;
+  padding: 24px;
+}
+
+.mess-proof-view-content {
+  margin-top: 16px;
+}
+
+.mess-existing-proof-image {
+  width: min(600px, 100%);
+  max-height: 500px;
+  object-fit: contain;
+  border-radius: 10px;
+  border: 1px solid #e0e5df;
+}
+
+.mess-proof-document {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+}
+
+.mess-proof-document-icon {
+  width: 58px;
+  height: 58px;
+  background: #fff0e9;
+  color: #cf622b;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+}
+
+.mess-proof-document h3 {
+  margin: 0 0 9px;
+  font-size: 16px;
+}
+
+.mess-profile-bottom-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.mess-primary-button,
+.mess-secondary-button {
+  height: 48px;
+  padding: 0 20px;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.mess-primary-button {
+  border: none;
+  background: #df7629;
+  color: white;
+}
+
+.mess-secondary-button {
+  border: 1px solid #d7ddd8;
+  background: white;
+  color: #23463e;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1000px) {
+  .mess-profile-page {
+    grid-template-columns: 1fr;
+  }
+
+  .mess-profile-info {
+    min-height: auto;
+    padding: 35px;
+  }
+
+  .mess-profile-info-content {
+    margin-top: 65px;
+  }
+
+  .mess-profile-form-section {
+    padding: 55px 35px;
+  }
+
+  .mess-profile-view-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .mess-profile-info {
+    padding: 30px 24px;
+  }
+
+  .mess-profile-form-section {
+    padding: 40px 20px;
+  }
+
+  .mess-profile-info h1 {
+    font-size: 47px;
+  }
+
+  .mess-profile-row,
+  .mess-upload-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mess-profile-heading h2 {
+    font-size: 31px;
+  }
+
+  .mess-profile-view-header {
+    padding: 0 20px;
+  }
+
+  .mess-header-button {
+    display: none;
+  }
+
+  .mess-profile-view-container {
+    padding: 40px 20px 60px;
+  }
+
+  .mess-profile-view-heading {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .mess-profile-view-heading h1 {
+    font-size: 35px;
+  }
+
+  .mess-existing-image,
+  .mess-no-image {
+    height: 260px;
+  }
+
+  .mess-profile-bottom-actions {
+    flex-direction: column;
+  }
+
+  .mess-primary-button,
+  .mess-secondary-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .mess-profile-info h1 {
+    font-size: 40px;
+  }
+
+  .mess-profile-brand {
+    margin-bottom: 45px;
+  }
+
+  .mess-form-actions {
+    flex-direction: column;
+  }
+
+  .mess-cancel-button {
+    width: 100%;
+  }
+}

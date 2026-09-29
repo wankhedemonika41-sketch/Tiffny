@@ -1,0 +1,596 @@
+/* ========================================
+   MESS OWNER REGISTRATION
+======================================== */
+
+.mess-register-page {
+  min-height: 100vh;
+
+  display: grid;
+
+  grid-template-columns: 43% 57%;
+
+  background: #fffaf3;
+}
+
+
+/* ========================================
+   LEFT BRAND
+======================================== */
+
+.mess-register-brand {
+  position: relative;
+
+  overflow: hidden;
+
+  padding: 45px 8%;
+
+  background:
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(232, 123, 50, 0.25),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      #173f33,
+      #245c4a
+    );
+
+  color: white;
+}
+
+
+.mess-register-brand::before {
+  content: "";
+
+  position: absolute;
+
+  width: 400px;
+  height: 400px;
+
+  right: -200px;
+  bottom: -180px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  border-radius: 50%;
+}
+
+.mess-register-brand::after {
+  content: "";
+
+  position: absolute;
+
+  width: 250px;
+  height: 250px;
+
+  right: -80px;
+  bottom: -100px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  border-radius: 50%;
+}
+
+
+/* ========================================
+   BACK BUTTON
+======================================== */
+
+.mess-back-button {
+  position: relative;
+
+  z-index: 2;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 8px 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #c5d8cf;
+
+  font-size: 13px;
+
+  cursor: pointer;
+
+  transition: 0.25s ease;
+}
+
+.mess-back-button span {
+  font-size: 18px;
+}
+
+.mess-back-button:hover {
+  color: white;
+
+  transform: translateX(-3px);
+}
+
+
+/* ========================================
+   BRAND CONTENT
+======================================== */
+
+.mess-register-brand-content {
+  position: relative;
+
+  z-index: 2;
+
+  margin-top: 75px;
+}
+
+.mess-brand-mark {
+  width: 55px;
+  height: 55px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 15px;
+
+  background: #e87b32;
+
+  color: white;
+
+  font-size: 25px;
+
+  font-weight: 800;
+}
+
+.mess-brand-name {
+  margin: 12px 0 0;
+
+  font-size: 22px;
+
+  font-weight: 800;
+}
+
+
+.mess-register-brand-content h1 {
+  margin: 55px 0 20px;
+
+  font-size: clamp(45px, 5vw, 68px);
+
+  line-height: 0.98;
+
+  letter-spacing: -3px;
+}
+
+.mess-register-brand-content h1 span {
+  display: block;
+
+  color: #f2a268;
+}
+
+
+.mess-brand-description {
+  max-width: 460px;
+
+  color: #c5d8cf;
+
+  font-size: 14px;
+
+  line-height: 1.8;
+}
+
+
+/* ========================================
+   POINTS
+======================================== */
+
+.mess-register-points {
+  margin-top: 55px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 15px;
+}
+
+.mess-register-point {
+  display: flex;
+
+  align-items: center;
+
+  gap: 15px;
+}
+
+.mess-register-point span {
+  color: #f2a268;
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  letter-spacing: 1px;
+}
+
+.mess-register-point p {
+  margin: 0;
+
+  color: #d9e5df;
+
+  font-size: 12px;
+}
+
+
+/* ========================================
+   RIGHT SECTION
+======================================== */
+
+.mess-register-form-section {
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  padding: 60px;
+}
+
+.mess-register-container {
+  width: 100%;
+
+  max-width: 500px;
+}
+
+
+/* ========================================
+   HEADING
+======================================== */
+
+.mess-register-heading {
+  margin-bottom: 32px;
+}
+
+.mess-register-heading > span {
+  color: #e87b32;
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  letter-spacing: 2px;
+}
+
+.mess-register-heading h2 {
+  margin: 12px 0 8px;
+
+  color: #1d2421;
+
+  font-size: 38px;
+
+  letter-spacing: -1.5px;
+}
+
+.mess-register-heading p {
+  margin: 0;
+
+  color: #7d8781;
+
+  font-size: 13px;
+}
+
+
+/* ========================================
+   FORM
+======================================== */
+
+.mess-register-form {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 20px;
+}
+
+.mess-form-group {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.mess-form-group label {
+  color: #303a35;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+.mess-form-group input {
+  width: 100%;
+
+  height: 50px;
+
+  box-sizing: border-box;
+
+  padding: 0 15px;
+
+  border: 1px solid #ddd9d1;
+
+  border-radius: 8px;
+
+  outline: none;
+
+  background: white;
+
+  color: #1d2421;
+
+  font-size: 13px;
+
+  transition: 0.25s ease;
+}
+
+.mess-form-group input::placeholder {
+  color: #a4aaa5;
+}
+
+.mess-form-group input:focus {
+  border-color: #245c4a;
+
+  box-shadow:
+    0 0 0 3px rgba(36, 92, 74, 0.08);
+}
+
+
+/* ========================================
+   PASSWORD
+======================================== */
+
+.mess-password-group {
+  grid-column: span 2;
+}
+
+.mess-password-wrapper {
+  position: relative;
+}
+
+.mess-password-wrapper input {
+  padding-right: 65px;
+}
+
+.mess-password-toggle {
+  position: absolute;
+
+  right: 13px;
+
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  border: none;
+
+  background: transparent;
+
+  color: #245c4a;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* ========================================
+   INFORMATION BOX
+======================================== */
+
+.owner-info-box {
+  grid-column: span 2;
+
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 12px;
+
+  padding: 13px 15px;
+
+  border: 1px solid #d8e5de;
+
+  border-radius: 8px;
+
+  background: #e6f0e9;
+}
+
+.owner-info-number {
+  width: 22px;
+  height: 22px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #245c4a;
+
+  color: white;
+
+  font-size: 11px;
+
+  font-weight: 800;
+}
+
+.owner-info-box p {
+  margin: 0;
+
+  color: #486057;
+
+  font-size: 10px;
+
+  line-height: 1.6;
+}
+
+
+/* ========================================
+   SUBMIT
+======================================== */
+
+.mess-register-submit {
+  grid-column: span 2;
+
+  height: 54px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 18px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #e87b32;
+
+  color: white;
+
+  font-size: 13px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 10px 25px rgba(232, 123, 50, 0.18);
+
+  transition: 0.25s ease;
+}
+
+.mess-register-submit:hover {
+  background: #d96c25;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 15px 30px rgba(232, 123, 50, 0.25);
+}
+
+.mess-register-submit span {
+  font-size: 18px;
+}
+
+
+/* ========================================
+   LOGIN LINK
+======================================== */
+
+.mess-already-account {
+  margin-top: 25px;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+.mess-already-account p {
+  margin: 0;
+
+  color: #7d8781;
+
+  font-size: 11px;
+}
+
+.mess-already-account button {
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #245c4a;
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.mess-already-account button:hover {
+  color: #e87b32;
+}
+
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 950px) {
+
+  .mess-register-page {
+    grid-template-columns: 1fr;
+  }
+
+  .mess-register-brand {
+    min-height: 500px;
+
+    padding: 40px 7%;
+  }
+
+  .mess-register-brand-content {
+    margin-top: 55px;
+  }
+
+  .mess-register-form-section {
+    padding: 60px 30px;
+  }
+}
+
+
+@media (max-width: 550px) {
+
+  .mess-register-brand {
+    min-height: 450px;
+
+    padding: 30px 25px;
+  }
+
+  .mess-register-brand-content h1 {
+    font-size: 44px;
+  }
+
+  .mess-register-form-section {
+    padding: 50px 20px;
+  }
+
+  .mess-register-form {
+    grid-template-columns: 1fr;
+  }
+
+  .mess-password-group,
+  .owner-info-box,
+  .mess-register-submit {
+    grid-column: span 1;
+  }
+
+  .mess-already-account {
+    flex-direction: column;
+  }
+}
