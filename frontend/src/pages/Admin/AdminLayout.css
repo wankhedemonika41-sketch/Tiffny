@@ -1,0 +1,369 @@
+.admin-layout {
+  min-height: 100vh;
+  display: flex;
+  background: #f6f7f9;
+  color: #172033;
+}
+
+/* ---------- sidebar ---------- */
+
+.admin-sidebar {
+  width: 240px;
+  background: #ffffff;
+  border-right: 1px solid #e8ebf0;
+
+  display: flex;
+  flex-direction: column;
+
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+
+  padding: 24px 14px;
+  box-sizing: border-box;
+}
+
+/* ---------- brand ---------- */
+
+.admin-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 0 10px 22px;
+  margin-bottom: 18px;
+
+  border-bottom: 1px solid #eef0f4;
+}
+
+.admin-brand-mark {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #fca311;
+  color: #14213d;
+
+  border-radius: 9px;
+
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.admin-brand h2 {
+  margin: 0;
+
+  color: #14213d;
+
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.admin-brand span {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #8a94a6;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ---------- navigation ---------- */
+
+.admin-navigation {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin-nav-link {
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 12px;
+
+  border-radius: 8px;
+
+  color: #5b6679;
+
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.admin-nav-link:hover {
+  background: #f3f5f8;
+  color: #172033;
+}
+
+.admin-nav-link.active {
+  background: #fff4e0;
+  color: #14213d;
+  font-weight: 650;
+}
+
+/* ---------- sidebar bottom ---------- */
+
+.admin-sidebar-bottom {
+  margin-top: auto;
+
+  padding-top: 14px;
+
+  border-top: 1px solid #eef0f4;
+}
+
+.admin-admin-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 6px 10px 12px;
+}
+
+.admin-profile-circle {
+  width: 32px;
+  height: 32px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #eef1f6;
+  color: #14213d;
+
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.admin-admin-info strong {
+  display: block;
+
+  color: #172033;
+
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.admin-admin-info span {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #8a94a6;
+
+  font-size: 11px;
+}
+
+/* ---------- logout ---------- */
+
+.admin-logout-button {
+  width: 100%;
+  height: 38px;
+
+  border: 1px solid #e3e7ee;
+  border-radius: 8px;
+
+  background: transparent;
+  color: #5b6679;
+
+  cursor: pointer;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.admin-logout-button:hover {
+  background: #f3f5f8;
+  color: #172033;
+}
+
+/* ---------- main area ---------- */
+
+.admin-main-content {
+  width: calc(100% - 240px);
+  min-height: 100vh;
+
+  margin-left: 240px;
+}
+
+/* ---------- top bar ---------- */
+
+.admin-topbar {
+  height: 60px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 40px;
+
+  background: #ffffff;
+  border-bottom: 1px solid #e8ebf0;
+
+  box-sizing: border-box;
+}
+
+.admin-topbar h1 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.admin-security-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  color: #6b7587;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.admin-status-dot {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #2e9b62;
+}
+
+/* ---------- page content ---------- */
+
+.admin-page-content {
+  width: 100%;
+  min-height: calc(100vh - 60px);
+
+  box-sizing: border-box;
+}
+
+/* ---------- tablet ---------- */
+
+@media (max-width: 1000px) {
+  .admin-sidebar {
+    width: 210px;
+  }
+
+  .admin-main-content {
+    width: calc(100% - 210px);
+    margin-left: 210px;
+  }
+
+  .admin-topbar {
+    padding: 0 25px;
+  }
+}
+
+/* ---------- mobile: sidebar becomes a top bar ---------- */
+
+@media (max-width: 760px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    position: static;
+    width: 100%;
+    min-height: auto;
+
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+
+    padding: 12px 14px;
+
+    border-right: none;
+    border-bottom: 1px solid #e8ebf0;
+  }
+
+  .admin-brand {
+    padding: 0;
+    margin: 0;
+    border-bottom: none;
+  }
+
+  .admin-brand > div:last-child {
+    display: none;
+  }
+
+  /* links scroll sideways if they don't fit */
+  .admin-navigation {
+    flex: 1;
+    flex-direction: row;
+    gap: 4px;
+
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .admin-navigation::-webkit-scrollbar {
+    display: none;
+  }
+
+  .admin-nav-link {
+    height: 36px;
+    flex-shrink: 0;
+
+    white-space: nowrap;
+
+    font-size: 13px;
+  }
+
+  .admin-sidebar-bottom {
+    margin: 0;
+    padding: 0;
+    border-top: none;
+  }
+
+  .admin-admin-info {
+    display: none;
+  }
+
+  .admin-logout-button {
+    width: auto;
+    height: 36px;
+    padding: 0 14px;
+  }
+
+  .admin-main-content {
+    width: 100%;
+    margin-left: 0;
+    min-height: auto;
+  }
+
+  .admin-topbar {
+    height: 54px;
+    padding: 0 16px;
+  }
+
+  .admin-security-status {
+    display: none;
+  }
+
+  .admin-page-content {
+    min-height: auto;
+  }
+}

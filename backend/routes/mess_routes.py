@@ -374,6 +374,35 @@ def update_mess_profile(
         )
     }
 
+# =========================================================
+# UPLOAD NEW MESS IMAGE
+# =========================================================
+
+@router.post("/upload-photo")
+async def upload_mess_photo(
+    file: UploadFile = File(...),
+    current_user=Depends(
+        require_role("MESS_OWNER")
+    )
+):
+    owner_id = str(current_user["_id"])
+
+    photo_path = await save_uploaded_file(
+        uploaded_file=file,
+        owner_id=owner_id,
+        folder_name="mess_image",
+        allowed_types=[
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+        ]
+    )
+
+    return {
+        "message": "Image uploaded successfully",
+        "photo": photo_path
+}
+
 
 # =========================================================
 # UPDATE MESS CAPACITY

@@ -1,22 +1,17 @@
-import {
-  useEffect,
-  useState,
-} from "react";
-
-import {
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import "./MessProfile.css";
 
 const API_BASE_URL = "http://127.0.0.1:8000";
 
+// route used to upload a new mess image
+const UPLOAD_PHOTO_URL = `${API_BASE_URL}/mess/upload-photo`;
+const UPLOAD_PHOTO_FIELD = "file";
 
-/* =========================================================
-   FIND LOGIN TOKEN
-========================================================= */
+const MAX_IMAGE_SIZE_MB = 5;
 
+// we don't know where the token was saved, so check the usual places
 function findLoginToken() {
   const possibleKeys = [
     "access_token",
@@ -28,112 +23,52 @@ function findLoginToken() {
     "tiffnyToken",
   ];
 
-  /* Check localStorage */
+  const storages = [localStorage, sessionStorage];
 
-  for (const key of possibleKeys) {
-    const value = localStorage.getItem(key);
-
-    if (value) {
-      return value;
+  // first try the common key names
+  for (const storage of storages) {
+    for (const key of possibleKeys) {
+      const value = storage.getItem(key);
+      if (value) return value;
     }
   }
 
-  /* Check sessionStorage */
+  // if that fails, look through everything that is stored
+  for (const storage of storages) {
+    for (let i = 0; i < storage.length; i++) {
+      const key = storage.key(i);
+      const value = storage.getItem(key);
 
-  for (const key of possibleKeys) {
-    const value = sessionStorage.getItem(key);
-
-    if (value) {
-      return value;
-    }
-  }
-
-  /* Check localStorage for JWT directly */
-
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    const value = localStorage.getItem(key);
-
-    if (
-      value &&
-      typeof value === "string" &&
-      value.startsWith("eyJ") &&
-      value.split(".").length === 3
-    ) {
-      return value;
-    }
-
-    /* Check if token is inside JSON */
-
-    if (value) {
-      try {
-        const parsed = JSON.parse(value);
-
-        if (
-          parsed &&
-          typeof parsed === "object"
-        ) {
-          const token =
-            parsed.access_token ||
-            parsed.accessToken ||
-            parsed.token ||
-            parsed.jwt ||
-            parsed.authToken;
-
-          if (
-            token &&
-            typeof token === "string"
-          ) {
-            return token;
-          }
-        }
-      } catch {
-        /* Value is not JSON. Continue checking. */
+      // looks like a jwt
+      if (
+        value &&
+        typeof value === "string" &&
+        value.startsWith("eyJ") &&
+        value.split(".").length === 3
+      ) {
+        return value;
       }
-    }
-  }
 
-  /* Check sessionStorage for JWT directly */
+      // maybe the token is inside a json object
+      if (value) {
+        try {
+          const parsed = JSON.parse(value);
 
-  for (let i = 0; i < sessionStorage.length; i++) {
-    const key = sessionStorage.key(i);
-    const value = sessionStorage.getItem(key);
+          if (parsed && typeof parsed === "object") {
+            const token =
+              parsed.access_token ||
+              parsed.accessToken ||
+              parsed.token ||
+              parsed.jwt ||
+              parsed.authToken;
 
-    if (
-      value &&
-      typeof value === "string" &&
-      value.startsWith("eyJ") &&
-      value.split(".").length === 3
-    ) {
-      return value;
-    }
-
-    /* Check JSON object in sessionStorage */
-
-    if (value) {
-      try {
-        const parsed = JSON.parse(value);
-
-        if (
-          parsed &&
-          typeof parsed === "object"
-        ) {
-          const token =
-            parsed.access_token ||
-            parsed.accessToken ||
-            parsed.token ||
-            parsed.jwt ||
-            parsed.authToken;
-
-          if (
-            token &&
-            typeof token === "string"
-          ) {
-            return token;
+            if (token && typeof token === "string") {
+              return token;
+            }
           }
+        } catch {
+          // not json, ignore
         }
-      } catch {
-        /* Value is not JSON. Continue checking. */
       }
     }
   }
@@ -141,37 +76,19 @@ function findLoginToken() {
   return null;
 }
 
-
-/* =========================================================
-   MESS PROFILE
-========================================================= */
-
 function MessProfile() {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  /* Check whether current page is Edit Profile */
-
-  const isEditMode =
-    location.pathname === "/mess/profile/edit";
-
-
-  /* =======================================================
-     STATE
-  ======================================================= */
+  const imageInputRef = useRef(null);
 
   const [profile, setProfile] = useState(null);
-
   const [loading, setLoading] = useState(true);
-
   const [saving, setSaving] = useState(false);
-
   const [error, setError] = useState("");
+  const [isEditMode, setIsEditMode] = useState(false);
 
-
-  /* =======================================================
-     EDIT FORM STATE
-  ======================================================= */
+  // new image picked by the user (not saved yet)
+  const [newImageFile, setNewImageFile] = useState(null);
+  const [newImagePreview, setNewImagePreview] = useState("");
 
   const [formData, setFormData] = useState({
     mess_name: "",
@@ -181,15 +98,19 @@ function MessProfile() {
     location: "",
   });
 
-
-  /* =======================================================
-     LOAD PROFILE
-  ======================================================= */
-
+  // load the profile when the page opens
   useEffect(() => {
     loadMessProfile();
   }, []);
 
+  // free the preview url when it changes or the page closes
+  useEffect(() => {
+    return () => {
+      if (newImagePreview) {
+        URL.revokeObjectURL(newImagePreview);
+      }
+    };
+  }, [newImagePreview]);
 
   async function loadMessProfile() {
     try {
@@ -204,29 +125,22 @@ function MessProfile() {
         return;
       }
 
-      const response = await fetch(
-        `${API_BASE_URL}/mess/profile`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/mess/profile`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.detail ||
-            "Failed to load mess profile."
-        );
+        throw new Error(data.detail || "Failed to load mess profile.");
       }
 
       setProfile(data);
 
-      /* Fill edit form with existing profile */
-
+      // fill the form with the saved values
       setFormData({
         mess_name: data.mess_name || "",
         description: data.description || "",
@@ -234,107 +148,135 @@ function MessProfile() {
         address: data.address || "",
         location: data.location || "",
       });
-
     } catch (error) {
-      console.error(
-        "Mess profile loading error:",
-        error
-      );
-
+      console.error("Mess profile loading error:", error);
       setError(error.message);
     } finally {
       setLoading(false);
     }
   }
 
-
-  /* =======================================================
-     FILE URL
-  ======================================================= */
-
+  // add the backend url if the path is not a full link
   function getFileUrl(filePath) {
-    if (!filePath) {
-      return "";
-    }
+    if (!filePath) return "";
 
-    if (
-      filePath.startsWith("http://") ||
-      filePath.startsWith("https://")
-    ) {
+    if (filePath.startsWith("http://") || filePath.startsWith("https://")) {
       return filePath;
     }
 
     return `${API_BASE_URL}${filePath}`;
   }
 
-
-  /* =======================================================
-     CHECK PDF
-  ======================================================= */
-
   function isPdf(filePath) {
-    if (!filePath) {
-      return false;
-    }
+    if (!filePath) return false;
 
-    return filePath
-      .toLowerCase()
-      .endsWith(".pdf");
+    return filePath.toLowerCase().endsWith(".pdf");
   }
 
-
-  /* =======================================================
-     VIEW VERIFICATION PROOF
-  ======================================================= */
-
   function handleViewProof() {
-    if (!profile?.verification_proof) {
-      return;
-    }
-
-    const proofUrl = getFileUrl(
-      profile.verification_proof
-    );
+    if (!profile?.verification_proof) return;
 
     window.open(
-      proofUrl,
+      getFileUrl(profile.verification_proof),
       "_blank",
       "noopener,noreferrer"
     );
   }
 
+  // opens the image that is on screen (new one if picked, else the saved one)
+  function handleViewImage() {
+    const url = newImagePreview || getFileUrl(profile?.photo);
 
-  /* =======================================================
-     EDIT PROFILE
-  ======================================================= */
+    if (!url) return;
+
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+
+  function handleChooseImage() {
+    imageInputRef.current?.click();
+  }
+
+  function handleImageSelected(event) {
+    const file = event.target.files?.[0];
+
+    // reset the input so the same file can be picked again
+    event.target.value = "";
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setError("Please select a valid image file (JPG, PNG, WEBP).");
+      return;
+    }
+
+    if (file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
+      setError(`Image must be smaller than ${MAX_IMAGE_SIZE_MB} MB.`);
+      return;
+    }
+
+    setError("");
+    setNewImageFile(file);
+    setNewImagePreview(URL.createObjectURL(file));
+  }
+
+  function handleRemoveNewImage() {
+    setNewImageFile(null);
+    setNewImagePreview("");
+  }
 
   function handleEditProfile() {
-    navigate("/mess/profile/edit");
+    setError("");
+    setIsEditMode(true);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   }
-
-
-  /* =======================================================
-     HANDLE FORM CHANGE
-  ======================================================= */
 
   function handleChange(event) {
-    const {
-      name,
-      value,
-    } = event.target;
+    const { name, value } = event.target;
 
-    setFormData(
-      (previousData) => ({
-        ...previousData,
-        [name]: value,
-      })
-    );
+    setFormData((previousData) => ({
+      ...previousData,
+      [name]: value,
+    }));
   }
 
+  // uploads the new image and gives back the saved path
+  async function uploadNewImage(token) {
+    const body = new FormData();
+    body.append(UPLOAD_PHOTO_FIELD, newImageFile);
 
-  /* =======================================================
-     SAVE PROFILE
-  ======================================================= */
+    // don't set Content-Type here, the browser adds it for FormData
+    const response = await fetch(UPLOAD_PHOTO_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.detail || "Failed to upload the new image.");
+    }
+
+    const uploadedPath =
+      data.photo ||
+      data.url ||
+      data.path ||
+      data.file_path ||
+      data.file_url ||
+      data.filename;
+
+    if (!uploadedPath) {
+      throw new Error("Upload succeeded but no image path was returned.");
+    }
+
+    return uploadedPath;
+  }
 
   async function handleSaveChanges(event) {
     event.preventDefault();
@@ -351,376 +293,190 @@ function MessProfile() {
         return;
       }
 
-      const response = await fetch(
-        `${API_BASE_URL}/mess/profile`,
-        {
-          method: "PUT",
+      // keep the old photo unless a new one was picked
+      let photoPath = profile?.photo || null;
 
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+      if (newImageFile) {
+        photoPath = await uploadNewImage(token);
+      }
 
-          body: JSON.stringify({
-            mess_name: formData.mess_name,
-            description: formData.description,
-            phone: formData.phone,
-            address: formData.address,
-            location: formData.location,
-
-            /*
-              Keep existing photo and
-              verification proof.
-            */
-
-            photo: profile?.photo || null,
-
-            verification_proof:
-              profile?.verification_proof ||
-              null,
-          }),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/mess/profile`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          mess_name: formData.mess_name,
+          description: formData.description,
+          phone: formData.phone,
+          address: formData.address,
+          location: formData.location,
+          photo: photoPath,
+          verification_proof: profile?.verification_proof || null,
+        }),
+      });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.detail ||
-            "Failed to update mess profile."
-        );
+        throw new Error(data.detail || "Failed to update mess profile.");
       }
-
-      /*
-        Reload the profile so the
-        latest information is displayed.
-      */
 
       await loadMessProfile();
 
-      alert(
-        "Mess profile updated successfully."
-      );
+      handleRemoveNewImage();
 
-      navigate("/mess/profile");
+      alert("Mess profile updated successfully.");
 
+      setIsEditMode(false);
     } catch (error) {
-      console.error(
-        "Mess profile update error:",
-        error
-      );
-
+      console.error("Mess profile update error:", error);
       setError(error.message);
-
     } finally {
       setSaving(false);
     }
   }
 
-
-  /* =======================================================
-     CANCEL EDIT
-  ======================================================= */
-
   function handleCancelEdit() {
-    navigate("/mess/profile");
+    handleRemoveNewImage();
+    setIsEditMode(false);
+    setError("");
+
+    // put the form back to the saved values
+    if (profile) {
+      setFormData({
+        mess_name: profile.mess_name || "",
+        description: profile.description || "",
+        phone: profile.phone || "",
+        address: profile.address || "",
+        location: profile.location || "",
+      });
+    }
   }
 
-
-  /* =======================================================
-     LOADING SCREEN
-  ======================================================= */
-
+  // ---------- loading screen ----------
   if (loading) {
     return (
       <div className="mess-profile-loading">
-
         <div className="mess-loading-box">
-
           <div className="mess-loading-line"></div>
 
-          <h2>
-            Loading your profile
-          </h2>
+          <h2>Loading your profile</h2>
 
-          <p>
-            Please wait while we load your mess
-            information.
-          </p>
-
+          <p>Please wait while we load your mess information.</p>
         </div>
-
       </div>
     );
   }
 
-
-  /* =======================================================
-     ERROR SCREEN
-  ======================================================= */
-
+  // ---------- error screen ----------
   if (error && !profile) {
     return (
       <div className="mess-profile-loading">
-
         <div className="mess-loading-box">
-
           <h2>
             {error === "Please login first."
               ? "Please login first"
               : "Unable to load profile"}
           </h2>
 
-          <p>
-            {error}
-          </p>
+          <p>{error}</p>
 
           <button
             type="button"
             className="mess-primary-button"
-            onClick={() =>
-              navigate("/login")
-            }
+            onClick={() => navigate("/login")}
           >
             Go to Login
           </button>
-
         </div>
-
       </div>
     );
   }
 
-
-  /* =======================================================
-     NO PROFILE
-  ======================================================= */
-
+  // ---------- no profile yet ----------
   if (!profile) {
     return (
       <div className="mess-profile-loading">
-
         <div className="mess-loading-box">
+          <h2>No Mess Profile Found</h2>
 
-          <h2>
-            No Mess Profile Found
-          </h2>
-
-          <p>
-            Your mess profile has not been created yet.
-          </p>
+          <p>Your mess profile has not been created yet.</p>
 
           <button
             type="button"
             className="mess-primary-button"
-            onClick={() =>
-              navigate("/mess/profile")
-            }
+            onClick={() => navigate("/mess/profile")}
           >
             Create Mess Profile
           </button>
-
         </div>
-
       </div>
     );
   }
 
+  const messImageUrl = getFileUrl(profile.photo);
+  const proofUrl = getFileUrl(profile.verification_proof);
 
-  /* =======================================================
-     FILE URLS
-  ======================================================= */
+  // image shown in the edit form
+  const displayedImageUrl = newImagePreview || messImageUrl;
 
-  const messImageUrl = getFileUrl(
-    profile.photo
-  );
-
-  const proofUrl = getFileUrl(
-    profile.verification_proof
-  );
-
-
-  /* =======================================================
-     EDIT PROFILE PAGE
-  ======================================================= */
-
+  // ---------- edit mode ----------
   if (isEditMode) {
     return (
-      <div className="mess-profile-page">
-
-        {/* =================================================
-            LEFT INFORMATION SECTION
-        ================================================= */}
-
-        <section className="mess-profile-info">
-
-          <div className="mess-profile-info-content">
-
-            <div className="mess-profile-brand">
-
-              <div className="mess-profile-brand-mark">
-                T
-              </div>
-
-              <span>
-                tiffny
-              </span>
-
-            </div>
-
-
-            <p className="mess-profile-label">
-              MESS OWNER
-            </p>
-
-
-            <h1>
-              Update your
-              <br />
-              mess
-              <span> profile.</span>
-            </h1>
-
-
-            <p className="mess-profile-description">
-              Update your mess information whenever
-              your details change.
-            </p>
-
-
-            <div className="mess-profile-steps">
-
-              <div className="mess-profile-step">
-
-                <div className="mess-step-number">
-                  01
-                </div>
-
-                <div>
-
-                  <h3>
-                    Update information
-                  </h3>
-
-                  <p>
-                    Change your mess details.
-                  </p>
-
-                </div>
-
-              </div>
-
-
-              <div className="mess-profile-step">
-
-                <div className="mess-step-number">
-                  02
-                </div>
-
-                <div>
-
-                  <h3>
-                    Review changes
-                  </h3>
-
-                  <p>
-                    Check your information before saving.
-                  </p>
-
-                </div>
-
-              </div>
-
-
-              <div className="mess-profile-step">
-
-                <div className="mess-step-number">
-                  03
-                </div>
-
-                <div>
-
-                  <h3>
-                    Save profile
-                  </h3>
-
-                  <p>
-                    Your updated information will be saved.
-                  </p>
-
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </section>
-
-
-        {/* =================================================
-            EDIT FORM SECTION
-        ================================================= */}
-
-        <section className="mess-profile-form-section">
-
-          <div className="mess-profile-container">
-
+      <div
+        className="mess-profile-page"
+        style={{
+          width: "100%",
+          minWidth: "0",
+        }}
+      >
+        <section
+          className="mess-profile-form-section"
+          style={{
+            width: "100%",
+            flex: "1",
+          }}
+        >
+          <div
+            className="mess-profile-container"
+            style={{
+              width: "100%",
+              maxWidth: "1400px",
+              margin: "0 auto",
+            }}
+          >
             <div className="mess-profile-heading">
+              <span>EDIT MESS PROFILE</span>
 
-              <span>
-                EDIT MESS PROFILE
-              </span>
+              <h2>Update your profile</h2>
 
-              <h2>
-                Update your profile
-              </h2>
-
-              <p>
-                Change the information you want to update.
-              </p>
-
+              <p>Change the information you want to update.</p>
             </div>
-
 
             <form
               className="mess-profile-form"
               onSubmit={handleSaveChanges}
+              style={{
+                width: "100%",
+                maxWidth: "1200px",
+              }}
             >
-
-              {/* =========================================
-                  MESS INFORMATION
-              ========================================= */}
-
+              {/* basic info */}
               <div className="mess-profile-section-title">
-
-                <span>
-                  01
-                </span>
+                <span>01</span>
 
                 <div>
+                  <h3>Mess Information</h3>
 
-                  <h3>
-                    Mess Information
-                  </h3>
-
-                  <p>
-                    Update your basic mess information.
-                  </p>
-
+                  <p>Update your basic mess information.</p>
                 </div>
-
               </div>
 
-
               <div className="mess-profile-row">
-
                 <div className="mess-profile-field">
-
-                  <label htmlFor="mess_name">
-                    Mess Name
-                  </label>
+                  <label htmlFor="mess_name">Mess Name</label>
 
                   <input
                     id="mess_name"
@@ -730,15 +486,10 @@ function MessProfile() {
                     onChange={handleChange}
                     required
                   />
-
                 </div>
 
-
                 <div className="mess-profile-field">
-
-                  <label htmlFor="phone">
-                    Phone Number
-                  </label>
+                  <label htmlFor="phone">Phone Number</label>
 
                   <input
                     id="phone"
@@ -748,17 +499,11 @@ function MessProfile() {
                     onChange={handleChange}
                     required
                   />
-
                 </div>
-
               </div>
 
-
               <div className="mess-profile-field">
-
-                <label htmlFor="description">
-                  Description
-                </label>
+                <label htmlFor="description">Description</label>
 
                 <textarea
                   id="description"
@@ -768,40 +513,21 @@ function MessProfile() {
                   rows="4"
                   required
                 />
-
               </div>
 
-
-              {/* =========================================
-                  LOCATION
-              ========================================= */}
-
+              {/* address and location */}
               <div className="mess-profile-section-title">
-
-                <span>
-                  02
-                </span>
+                <span>02</span>
 
                 <div>
+                  <h3>Mess Location</h3>
 
-                  <h3>
-                    Mess Location
-                  </h3>
-
-                  <p>
-                    Update your mess address and location.
-                  </p>
-
+                  <p>Update your mess address and location.</p>
                 </div>
-
               </div>
 
-
               <div className="mess-profile-field">
-
-                <label htmlFor="address">
-                  Mess Address
-                </label>
+                <label htmlFor="address">Mess Address</label>
 
                 <textarea
                   id="address"
@@ -811,15 +537,10 @@ function MessProfile() {
                   rows="3"
                   required
                 />
-
               </div>
 
-
               <div className="mess-profile-field">
-
-                <label htmlFor="location">
-                  Location
-                </label>
+                <label htmlFor="location">Location</label>
 
                 <input
                   id="location"
@@ -829,112 +550,109 @@ function MessProfile() {
                   onChange={handleChange}
                   required
                 />
-
               </div>
 
-
-              {/* =========================================
-                  CURRENT FILES
-              ========================================= */}
-
+              {/* documents */}
               <div className="mess-profile-section-title">
-
-                <span>
-                  03
-                </span>
+                <span>03</span>
 
                 <div>
+                  <h3>Current Documents</h3>
 
-                  <h3>
-                    Current Documents
-                  </h3>
-
-                  <p>
-                    Your existing uploaded files are kept.
-                  </p>
-
+                  <p>You can change the mess image. Your proof is kept.</p>
                 </div>
-
               </div>
 
-
               <div className="mess-upload-grid">
-
-                {/* MESS IMAGE */}
-
+                {/* mess image */}
                 <div className="mess-upload-box">
-
-                  <div className="mess-upload-icon">
-                    IMG
-                  </div>
+                  <div className="mess-upload-icon">IMG</div>
 
                   <h3>
-                    Current Mess Image
+                    {newImageFile ? "New Mess Image" : "Current Mess Image"}
                   </h3>
 
-                  {messImageUrl ? (
-
+                  {displayedImageUrl ? (
                     <div className="mess-file-preview">
-
                       <img
-                        src={messImageUrl}
-                        alt="Current mess"
+                        src={displayedImageUrl}
+                        alt="Mess"
                         className="mess-image-preview"
                       />
 
+                      {newImageFile && (
+                        <p className="mess-file-note">
+                          New image selected. It will be saved when you click
+                          Save Changes.
+                        </p>
+                      )}
                     </div>
-
                   ) : (
-
-                    <p>
-                      No mess image available.
-                    </p>
-
+                    <p>No mess image available.</p>
                   )}
 
+                  {/* hidden, opened by the Change Image button */}
+                  <input
+                    ref={imageInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="mess-hidden-input"
+                    onChange={handleImageSelected}
+                  />
+
+                  <div className="mess-image-actions">
+                    {displayedImageUrl && (
+                      <button
+                        type="button"
+                        className="mess-view-proof-button"
+                        onClick={handleViewImage}
+                      >
+                        View Image
+                      </button>
+                    )}
+
+                    <button
+                      type="button"
+                      className="mess-change-button"
+                      onClick={handleChooseImage}
+                      disabled={saving}
+                    >
+                      Change Image
+                    </button>
+
+                    {newImageFile && (
+                      <button
+                        type="button"
+                        className="mess-view-proof-button"
+                        onClick={handleRemoveNewImage}
+                        disabled={saving}
+                      >
+                        Undo
+                      </button>
+                    )}
+                  </div>
                 </div>
 
-
-                {/* VERIFICATION PROOF */}
-
+                {/* verification proof */}
                 <div className="mess-upload-box">
+                  <div className="mess-upload-icon">DOC</div>
 
-                  <div className="mess-upload-icon">
-                    DOC
-                  </div>
-
-                  <h3>
-                    Verification Proof
-                  </h3>
+                  <h3>Verification Proof</h3>
 
                   {profile.verification_proof ? (
-
                     <div className="mess-file-preview">
-
-                      {isPdf(
-                        profile.verification_proof
-                      ) ? (
-
+                      {isPdf(profile.verification_proof) ? (
                         <div className="mess-pdf-preview">
+                          <div className="mess-pdf-icon">PDF</div>
 
-                          <div className="mess-pdf-icon">
-                            PDF
-                          </div>
-
-                          <p>
-                            Verification document
-                          </p>
-
+                          <p>Verification document</p>
                         </div>
-
                       ) : (
-
                         <img
                           src={proofUrl}
                           alt="Verification proof"
                           className="mess-proof-image-preview"
                         />
-
                       )}
 
                       <button
@@ -944,55 +662,26 @@ function MessProfile() {
                       >
                         View Proof
                       </button>
-
                     </div>
-
                   ) : (
-
-                    <p>
-                      No verification proof available.
-                    </p>
-
+                    <p>No verification proof available.</p>
                   )}
-
                 </div>
-
               </div>
-
-
-              {/* =========================================
-                  ERROR
-              ========================================= */}
 
               {error && (
                 <div className="mess-profile-info-box">
-
-                  <div className="mess-info-symbol">
-                    !
-                  </div>
+                  <div className="mess-info-symbol">!</div>
 
                   <div>
+                    <strong>Unable to save changes</strong>
 
-                    <strong>
-                      Unable to save changes
-                    </strong>
-
-                    <p>
-                      {error}
-                    </p>
-
+                    <p>{error}</p>
                   </div>
-
                 </div>
               )}
 
-
-              {/* =========================================
-                  BUTTONS
-              ========================================= */}
-
               <div className="mess-form-actions">
-
                 <button
                   type="button"
                   className="mess-cancel-button"
@@ -1002,265 +691,124 @@ function MessProfile() {
                   Cancel
                 </button>
 
-
                 <button
                   type="submit"
                   className="mess-profile-submit"
                   disabled={saving}
                 >
-                  {saving
-                    ? "Saving..."
-                    : "Save Changes"}
+                  {saving ? "Saving..." : "Save Changes"}
 
-                  {!saving && (
-                    <span>
-                      →
-                    </span>
-                  )}
-
+                  {!saving && <span>→</span>}
                 </button>
-
               </div>
-
             </form>
-
           </div>
-
         </section>
-
       </div>
     );
   }
 
-
-  /* =======================================================
-     MAIN PROFILE VIEW PAGE
-  ======================================================= */
-
+  // ---------- normal view ----------
   return (
     <div className="mess-profile-view-page">
-
-      {/* ===================================================
-          HEADER
-      =================================================== */}
-
       <header className="mess-profile-view-header">
-
         <div
           className="mess-profile-view-brand"
           onClick={() => navigate("/")}
         >
+          <div className="mess-profile-view-brand-mark">T</div>
 
-          <div className="mess-profile-view-brand-mark">
-            T
-          </div>
-
-          <span>
-            tiffny
-          </span>
-
+          <span>tiffny</span>
         </div>
-
-        {/* Dashboard button removed */}
-
-        {/* Top Edit button removed */}
-
       </header>
 
-
-      {/* ===================================================
-          MAIN CONTAINER
-      =================================================== */}
-
       <main className="mess-profile-view-container">
-
-        {/* =================================================
-            PAGE HEADING
-        ================================================= */}
-
         <div className="mess-profile-view-heading">
-
           <div>
+            <span className="mess-profile-view-label">MESS OWNER</span>
 
-            <span className="mess-profile-view-label">
-              MESS OWNER
-            </span>
+            <h1>Your Mess Profile</h1>
 
-            <h1>
-              Your Mess Profile
-            </h1>
-
-            <p>
-              View and manage the information of your
-              registered mess.
-            </p>
-
+            <p>View and manage the information of your registered mess.</p>
           </div>
-
 
           <div
             className={`mess-status-badge ${
-              profile.status
-                ? profile.status.toLowerCase()
-                : "pending"
+              profile.status ? profile.status.toLowerCase() : "pending"
             }`}
           >
             {profile.status || "PENDING"}
           </div>
-
         </div>
-
-
-        {/* =================================================
-            PROFILE GRID
-        ================================================= */}
 
         <div className="mess-profile-view-grid">
-
-          {/* ===============================================
-              MESS IMAGE
-          =============================================== */}
-
+          {/* image card */}
           <div className="mess-profile-image-card">
+            <span className="mess-card-label">MESS PROFILE</span>
 
-            <span className="mess-card-label">
-              MESS PROFILE
-            </span>
-
-            <h2>
-              Mess Image
-            </h2>
+            <h2>Mess Image</h2>
 
             {messImageUrl ? (
+              <>
+                <img
+                  src={messImageUrl}
+                  alt="Mess"
+                  className="mess-existing-image"
+                />
 
-              <img
-                src={messImageUrl}
-                alt="Mess"
-                className="mess-existing-image"
-              />
-
+                <button
+                  type="button"
+                  className="mess-view-proof-button"
+                  onClick={handleViewImage}
+                >
+                  View Image
+                </button>
+              </>
             ) : (
-
-              <div className="mess-no-image">
-                No mess image available
-              </div>
-
+              <div className="mess-no-image">No mess image available</div>
             )}
-
           </div>
 
-
-          {/* ===============================================
-              MESS INFORMATION
-          =============================================== */}
-
+          {/* details card */}
           <div className="mess-profile-details-card">
+            <span className="mess-card-label">MESS INFORMATION</span>
 
-            <span className="mess-card-label">
-              MESS INFORMATION
-            </span>
-
-            <h2>
-              {profile.mess_name}
-            </h2>
-
-
-            {/* Description */}
+            <h2>{profile.mess_name}</h2>
 
             <div className="mess-detail-item">
-
-              <span>
-                Description
-              </span>
-
-              <p>
-                {profile.description ||
-                  "Not provided"}
-              </p>
-
+              <span>Description</span>
+              <p>{profile.description || "Not provided"}</p>
             </div>
-
-
-            {/* Phone */}
 
             <div className="mess-detail-item">
-
-              <span>
-                Phone Number
-              </span>
-
-              <p>
-                {profile.phone ||
-                  "Not provided"}
-              </p>
-
+              <span>Phone Number</span>
+              <p>{profile.phone || "Not provided"}</p>
             </div>
-
-
-            {/* Address */}
 
             <div className="mess-detail-item">
-
-              <span>
-                Address
-              </span>
-
-              <p>
-                {profile.address ||
-                  "Not provided"}
-              </p>
-
+              <span>Address</span>
+              <p>{profile.address || "Not provided"}</p>
             </div>
-
-
-            {/* Location */}
 
             <div className="mess-detail-item">
-
-              <span>
-                Location
-              </span>
-
-              <p>
-                {profile.location ||
-                  "Not provided"}
-              </p>
-
+              <span>Location</span>
+              <p>{profile.location || "Not provided"}</p>
             </div>
-
           </div>
-
         </div>
 
-
-        {/* =================================================
-            VERIFICATION STATUS
-        ================================================= */}
-
+        {/* verification status */}
         <div className="mess-verification-card">
-
-          <div className="mess-verification-icon">
-            i
-          </div>
+          <div className="mess-verification-icon">i</div>
 
           <div className="mess-verification-content">
-
-            <span>
-              VERIFICATION STATUS
-            </span>
+            <span>VERIFICATION STATUS</span>
 
             <h2>
-
-              Your mess is{" "}
-
-              <strong>
-                {profile.status || "PENDING"}
-              </strong>
-
+              Your mess is <strong>{profile.status || "PENDING"}</strong>
             </h2>
 
             <p>
-
               {profile.status === "APPROVED"
                 ? "Your mess profile has been approved by the admin."
                 : profile.status === "REJECTED"
@@ -1268,47 +816,22 @@ function MessProfile() {
                 : profile.status === "SUSPENDED"
                 ? "Your mess profile has been suspended."
                 : "Your mess profile has been submitted and will be reviewed by the admin."}
-
             </p>
-
           </div>
-
         </div>
 
-
-        {/* =================================================
-            VERIFICATION PROOF
-        ================================================= */}
-
+        {/* proof card, only if a proof was uploaded */}
         {profile.verification_proof && (
-
           <div className="mess-proof-view-card">
-
-            <span className="mess-card-label">
-              VERIFICATION PROOF
-            </span>
+            <span className="mess-card-label">VERIFICATION PROOF</span>
 
             <div className="mess-proof-view-content">
-
-              {/* ===========================================
-                  PDF PROOF
-              =========================================== */}
-
-              {isPdf(
-                profile.verification_proof
-              ) ? (
-
+              {isPdf(profile.verification_proof) ? (
                 <div className="mess-proof-document">
-
-                  <div className="mess-proof-document-icon">
-                    PDF
-                  </div>
+                  <div className="mess-proof-document-icon">PDF</div>
 
                   <div>
-
-                    <h3>
-                      Verification document
-                    </h3>
+                    <h3>Verification document</h3>
 
                     <button
                       type="button"
@@ -1317,19 +840,10 @@ function MessProfile() {
                     >
                       View PDF
                     </button>
-
                   </div>
-
                 </div>
-
               ) : (
-
-                /* =========================================
-                   IMAGE PROOF
-                ========================================= */
-
                 <div>
-
                   <img
                     src={proofUrl}
                     alt="Verification proof"
@@ -1343,26 +857,13 @@ function MessProfile() {
                   >
                     View Proof
                   </button>
-
                 </div>
-
               )}
-
             </div>
-
           </div>
-
         )}
 
-
-        {/* =================================================
-            BOTTOM ACTIONS
-        ================================================= */}
-
         <div className="mess-profile-bottom-actions">
-
-          {/* Only ONE button */}
-
           <button
             type="button"
             className="mess-primary-button"
@@ -1370,11 +871,8 @@ function MessProfile() {
           >
             Edit Mess Profile
           </button>
-
         </div>
-
       </main>
-
     </div>
   );
 }

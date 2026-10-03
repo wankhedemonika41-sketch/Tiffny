@@ -34,7 +34,9 @@ def get_pending_messes(
             "address": mess["address"],
             "location": mess["location"],
             "photo": mess.get("photo"),
+            "verification_proof": mess.get("verification_proof"),
             "status": mess["status"]
+            
         })
 
     return {

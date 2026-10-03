@@ -13,6 +13,11 @@ import MessOwnerLayout from "./pages/MessOwner/MessOwnerLayout";
 
 import MessDashboard from "./pages/MessOwner/MessDashboard";
 import MessProfile from "./pages/MessOwner/MessProfile";
+import MenuManagement from "./pages/MessOwner/MenuManagement";
+
+import AdminLayout from "./pages/Admin/AdminLayout";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
+
 
 function App() {
   return (
@@ -78,16 +83,15 @@ function App() {
           />
 
 
-          {/* These pages will be created next */}
+          {/* Menu Management */}
 
           <Route
             path="menu"
-            element={
-              <div style={{ padding: "40px" }}>
-                Menu Management
-              </div>
-            }
+            element={<MenuManagement />}
           />
+
+
+          {/* Capacity Management */}
 
           <Route
             path="capacity"
@@ -98,6 +102,9 @@ function App() {
             }
           />
 
+
+          {/* Monthly Price Management */}
+
           <Route
             path="monthly-price"
             element={
@@ -106,6 +113,9 @@ function App() {
               </div>
             }
           />
+
+
+          {/* Orders Management */}
 
           <Route
             path="orders"
@@ -116,6 +126,9 @@ function App() {
             }
           />
 
+
+          {/* Reviews Management */}
+
           <Route
             path="reviews"
             element={
@@ -123,6 +136,25 @@ function App() {
                 Reviews Management
               </div>
             }
+          />
+
+        </Route>
+
+
+        {/* =================================================
+            ADMIN AREA
+        ================================================= */}
+
+        <Route
+          path="/admin"
+          element={<AdminLayout />}
+        >
+
+          {/* Admin Dashboard */}
+
+          <Route
+            path="dashboard"
+            element={<AdminDashboard />}
           />
 
         </Route>
