@@ -10,7 +10,7 @@ SECRET_KEY = "tiffny-secret-key-change-later"
 ALGORITHM = "HS256"
 
 # Token validity
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
 
 
 def create_access_token(data: dict):

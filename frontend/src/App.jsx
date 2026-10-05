@@ -6,7 +6,10 @@ import {
 
 import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
+
 import StudentRegister from "./pages/StudentRegister/StudentRegister";
+import StudentDashboard from "./pages/Student/StudentDashboard";
+
 import MessRegister from "./pages/MessRegister/MessRegister";
 
 import MessOwnerLayout from "./pages/MessOwner/MessOwnerLayout";
@@ -14,9 +17,20 @@ import MessOwnerLayout from "./pages/MessOwner/MessOwnerLayout";
 import MessDashboard from "./pages/MessOwner/MessDashboard";
 import MessProfile from "./pages/MessOwner/MessProfile";
 import MenuManagement from "./pages/MessOwner/MenuManagement";
+import CapacityManagement from "./pages/MessOwner/CapacityManagement";
+import PricingManagement from "./pages/MessOwner/PricingManagement";
+import OrdersManagement from "./pages/MessOwner/OrdersManagement";
+import ReviewsManagement from "./pages/MessOwner/ReviewsManagement";
+
+import Messes from "./pages/Messes/Messes";
+import MessDetails from "./pages/MessDetails/MessDetails";
 
 import AdminLayout from "./pages/Admin/AdminLayout";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
+import ApprovedMesses from "./pages/Admin/ApprovedMesses";
+import RejectedMesses from "./pages/Admin/RejectedMesses";
+import SuspendedMesses from "./pages/Admin/SuspendedMesses";
+import PendingMesses from "./pages/Admin/PendingMesses";
 
 
 function App() {
@@ -47,6 +61,26 @@ function App() {
         <Route
           path="/register/mess"
           element={<MessRegister />}
+        />
+
+        <Route
+          path="/messes"
+          element={<Messes />}
+        />
+
+        <Route
+          path="/messes/:messId"
+          element={<MessDetails />}
+        />
+
+
+        {/* =================================================
+            STUDENT AREA
+        ================================================= */}
+
+        <Route
+          path="/student/dashboard"
+          element={<StudentDashboard />}
         />
 
 
@@ -95,11 +129,7 @@ function App() {
 
           <Route
             path="capacity"
-            element={
-              <div style={{ padding: "40px" }}>
-                Capacity Management
-              </div>
-            }
+            element={<CapacityManagement />}
           />
 
 
@@ -107,11 +137,7 @@ function App() {
 
           <Route
             path="monthly-price"
-            element={
-              <div style={{ padding: "40px" }}>
-                Monthly Price Management
-              </div>
-            }
+            element={<PricingManagement />}
           />
 
 
@@ -119,11 +145,7 @@ function App() {
 
           <Route
             path="orders"
-            element={
-              <div style={{ padding: "40px" }}>
-                Orders Management
-              </div>
-            }
+            element={<OrdersManagement />}
           />
 
 
@@ -131,11 +153,7 @@ function App() {
 
           <Route
             path="reviews"
-            element={
-              <div style={{ padding: "40px" }}>
-                Reviews Management
-              </div>
-            }
+            element={<ReviewsManagement />}
           />
 
         </Route>
@@ -155,6 +173,38 @@ function App() {
           <Route
             path="dashboard"
             element={<AdminDashboard />}
+          />
+
+
+          {/* Approved Messes */}
+
+          <Route
+            path="approved-messes"
+            element={<ApprovedMesses />}
+          />
+
+
+          {/* Rejected Messes */}
+
+          <Route
+            path="rejected-messes"
+            element={<RejectedMesses />}
+          />
+
+
+          {/* Suspended Messes */}
+
+          <Route
+            path="suspended-messes"
+            element={<SuspendedMesses />}
+          />
+
+
+          {/* Pending Messes */}
+
+          <Route
+            path="pending-messes"
+            element={<PendingMesses />}
           />
 
         </Route>

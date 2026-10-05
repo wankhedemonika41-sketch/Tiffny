@@ -18,7 +18,6 @@ function Login() {
     password: "",
   });
 
-
   function handleChange(event) {
     const { name, value } = event.target;
 
@@ -28,118 +27,151 @@ function Login() {
     }));
   }
 
-
   async function handleSubmit(event) {
     event.preventDefault();
 
     try {
+      // ==========================================
+      // LOGIN
+      // ==========================================
+
       const response = await loginUser({
         email: formData.email,
         password: formData.password,
       });
 
-      console.log(
-        "Login successful:",
-        response
-      );
+      console.log("Login successful:", response);
 
+      // ==========================================
+      // STORE LOGIN INFORMATION
+      // ==========================================
 
-      // Store authentication information
-
-      localStorage.setItem(
+      sessionStorage.setItem(
         "tiffny_token",
         response.access_token
       );
 
-      localStorage.setItem(
+      sessionStorage.setItem(
         "tiffny_user_id",
         response.user_id
       );
 
-      localStorage.setItem(
+      sessionStorage.setItem(
         "tiffny_user_name",
         response.name
       );
 
-      localStorage.setItem(
+      sessionStorage.setItem(
         "tiffny_user_role",
         response.role
       );
 
-
       alert("Login successful.");
 
-
       // ==========================================
-      // REDIRECT ACCORDING TO USER ROLE
+      // STUDENT
       // ==========================================
 
       if (response.role === "STUDENT") {
-
-        navigate("/student/dashboard");
-
-
-      } else if (response.role === "MESS_OWNER") {
-
-        /*
-          Check whether this Mess Owner
-          has already registered a mess.
-        */
-
-        const token = response.access_token;
-
-        const messProfile =
-          await getMessProfile(token);
-
-
-        /*
-          First-time Mess Owner
-
-          No mess profile exists yet.
-        */
-
-        if (messProfile === null) {
-
-          navigate("/mess/profile");
-
-
-        } else {
-
-          /*
-            Mess profile already exists.
-            Go to Mess Owner Dashboard.
-          */
-
-          navigate("/mess/dashboard");
-        }
-
-
-      } else if (response.role === "ADMIN") {
-
-        navigate("/admin/dashboard");
-
-
-      } else {
-
-        alert("Unknown user role.");
+        navigate("/");
+        return;
       }
 
+      // ==========================================
+      // ADMIN
+      // ==========================================
+
+      if (response.role === "ADMIN") {
+        navigate("/admin/dashboard");
+        return;
+      }
+
+      // ==========================================
+      // MESS OWNER
+      // ==========================================
+
+      if (response.role === "MESS_OWNER") {
+        const token = response.access_token;
+
+        try {
+          /*
+            Check whether this mess owner
+            already has a mess profile.
+          */
+
+          const messProfile =
+            await getMessProfile(token);
+
+          console.log(
+            "Mess profile:",
+            messProfile
+          );
+
+          // ----------------------------------------
+          // NO PROFILE
+          // ----------------------------------------
+
+          if (messProfile === null) {
+            navigate("/mess/profile");
+            return;
+          }
+
+          // ----------------------------------------
+          // PROFILE EXISTS
+          // ----------------------------------------
+
+          navigate("/mess/dashboard");
+          return;
+
+        } catch (profileError) {
+          /*
+            Login was successful, but checking
+            the mess profile failed.
+
+            We keep the user logged in.
+          */
+
+          console.error(
+            "Mess profile check failed:",
+            profileError
+          );
+
+          /*
+            For now, send the owner to the
+            mess profile page instead of
+            sending them back to login.
+          */
+
+          navigate("/mess/profile");
+          return;
+        }
+      }
+
+      // ==========================================
+      // UNKNOWN ROLE
+      // ==========================================
+
+      alert("Unknown user role.");
 
     } catch (error) {
+      // ==========================================
+      // LOGIN ERROR
+      // ==========================================
 
       console.error(
         "Login error:",
         error
       );
 
-      alert(error.message);
+      alert(
+        error.message ||
+        "Login failed."
+      );
     }
   }
 
-
   return (
     <div className="login-page">
-
 
       {/* =====================================================
           LEFT SECTION
@@ -149,7 +181,6 @@ function Login() {
 
         <div className="login-brand-content">
 
-
           <button
             className="login-back-button"
             onClick={() => navigate("/")}
@@ -158,16 +189,13 @@ function Login() {
             Back to Home
           </button>
 
-
           <div className="login-brand-mark">
             T
           </div>
 
-
           <p className="login-brand-name">
             tiffny
           </p>
-
 
           <h1>
             Good meals
@@ -176,15 +204,12 @@ function Login() {
             <span>better.</span>
           </h1>
 
-
           <p className="login-brand-description">
             Manage your meals, orders and mess
             experience from one simple platform.
           </p>
 
-
           <div className="login-feature-list">
-
 
             <div className="login-feature">
 
@@ -198,7 +223,6 @@ function Login() {
 
             </div>
 
-
             <div className="login-feature">
 
               <span className="feature-number">
@@ -210,7 +234,6 @@ function Login() {
               </span>
 
             </div>
-
 
             <div className="login-feature">
 
@@ -224,14 +247,11 @@ function Login() {
 
             </div>
 
-
           </div>
-
 
         </div>
 
       </section>
-
 
 
       {/* =====================================================
@@ -241,7 +261,6 @@ function Login() {
       <section className="login-form-section">
 
         <div className="login-form-container">
-
 
           <div className="login-heading">
 
@@ -260,16 +279,12 @@ function Login() {
           </div>
 
 
-
           <form
             className="login-form"
             onSubmit={handleSubmit}
           >
 
-
-            {/* =================================================
-                EMAIL
-            ================================================== */}
+            {/* EMAIL */}
 
             <div className="form-group">
 
@@ -290,10 +305,7 @@ function Login() {
             </div>
 
 
-
-            {/* =================================================
-                PASSWORD
-            ================================================== */}
+            {/* PASSWORD */}
 
             <div className="form-group">
 
@@ -334,7 +346,6 @@ function Login() {
                   required
                 />
 
-
                 <button
                   type="button"
                   className="password-toggle"
@@ -355,10 +366,7 @@ function Login() {
             </div>
 
 
-
-            {/* =================================================
-                LOGIN BUTTON
-            ================================================== */}
+            {/* LOGIN BUTTON */}
 
             <button
               type="submit"
@@ -372,14 +380,10 @@ function Login() {
 
             </button>
 
-
           </form>
 
 
-
-          {/* =================================================
-              DIVIDER
-          ================================================== */}
+          {/* DIVIDER */}
 
           <div className="login-divider">
 
@@ -394,10 +398,7 @@ function Login() {
           </div>
 
 
-
-          {/* =================================================
-              REGISTER OPTIONS
-          ================================================== */}
+          {/* REGISTER OPTIONS */}
 
           <div className="login-register">
 
@@ -405,9 +406,7 @@ function Login() {
               Don't have a Tiffny account?
             </p>
 
-
             <div className="login-register-buttons">
-
 
               <button
                 onClick={() =>
@@ -419,7 +418,6 @@ function Login() {
                 Register as Student
               </button>
 
-
               <button
                 onClick={() =>
                   navigate(
@@ -430,16 +428,13 @@ function Login() {
                 Register as Mess Owner
               </button>
 
-
             </div>
 
           </div>
 
-
         </div>
 
       </section>
-
 
     </div>
   );

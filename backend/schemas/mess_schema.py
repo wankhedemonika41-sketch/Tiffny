@@ -33,7 +33,12 @@ class MessProfileSchema(BaseModel):
     status: str
     rating: float
     total_reviews: int
+
+    # Capacity
     max_capacity: Optional[int] = None
+
+    # Pricing
+    one_time_price: Optional[float] = None
     monthly_price: Optional[float] = None
 
 
@@ -65,6 +70,28 @@ class StudentMessDetailsSchema(BaseModel):
     photo: Optional[str] = None
     rating: float
     total_reviews: int
+
+    # Capacity
+    max_capacity: Optional[int] = None
+
+    # Pricing visible to student
+    one_time_price: Optional[float] = None
+    monthly_price: Optional[float] = None
+
+    # Available menu
+    menu: list
+
+
+class PublicMessSchema(BaseModel):
+    mess_id: str
+    mess_name: str
+    description: str
+    phone: str
+    address: str
+    location: str
+    photo: Optional[str] = None
+    rating: float
+    total_reviews: int
     max_capacity: Optional[int] = None
     monthly_price: Optional[float] = None
-    menu: list
+    one_time_price: Optional[float] = None

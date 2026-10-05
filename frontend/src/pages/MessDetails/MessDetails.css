@@ -1,0 +1,943 @@
+/* ========================================
+   PAGE
+======================================== */
+
+.mess-details-page {
+  min-height: 100vh;
+
+  background: #fffdf8;
+
+  color: #14221e;
+}
+
+
+/* ========================================
+   NAVBAR
+======================================== */
+
+.details-navbar {
+  width: 100%;
+
+  height: 82px;
+
+  padding: 0 7%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: #fffdf8;
+
+  border-bottom: 1px solid #e5e8e3;
+
+  position: sticky;
+  top: 0;
+
+  z-index: 1000;
+}
+
+
+.details-brand {
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+
+  cursor: pointer;
+}
+
+
+.details-brand-mark {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  background: #176b55;
+
+  color: white;
+
+  font-size: 20px;
+  font-weight: 800;
+}
+
+
+.details-brand span {
+  color: #111b18;
+
+  font-size: 25px;
+  font-weight: 800;
+
+  letter-spacing: -0.8px;
+}
+
+
+.details-nav-links {
+  display: flex;
+
+  align-items: center;
+
+  gap: 38px;
+}
+
+
+.details-nav-link {
+  border: none;
+
+  background: transparent;
+
+  color: #111;
+
+  font-family: inherit;
+
+  font-size: 15px;
+
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+
+.details-nav-link:hover {
+  color: #176b55;
+}
+
+
+.details-login-button {
+  min-width: 96px;
+
+  padding: 11px 22px;
+
+  border: 1px solid #176b55;
+
+  border-radius: 9px;
+
+  background: transparent;
+
+  color: #176b55;
+
+  font-family: inherit;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+.details-login-button:hover {
+  background: #176b55;
+
+  color: white;
+}
+
+
+/* ========================================
+   CONTAINER
+======================================== */
+
+.mess-details-container {
+  width: min(1200px, 86%);
+
+  margin: 0 auto;
+
+  padding: 35px 0 80px;
+}
+
+
+/* ========================================
+   BACK
+======================================== */
+
+.back-to-messes {
+  border: none;
+
+  padding: 0;
+
+  margin-bottom: 25px;
+
+  background: transparent;
+
+  color: #176b55;
+
+  font-family: inherit;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+.back-to-messes:hover {
+  text-decoration: underline;
+}
+
+
+/* ========================================
+   HERO
+======================================== */
+
+.mess-details-hero {
+  display: grid;
+
+  grid-template-columns: 1.1fr 1fr;
+
+  gap: 45px;
+
+  align-items: center;
+}
+
+
+/* ========================================
+   IMAGE
+======================================== */
+
+.details-image {
+  height: 410px;
+
+  overflow: hidden;
+
+  border-radius: 22px;
+
+  background: #eaf1ed;
+
+  box-shadow:
+    0 12px 35px rgba(25, 55, 45, 0.08);
+}
+
+
+.details-image img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+
+.details-image-placeholder {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    linear-gradient(
+      135deg,
+      #edf5f1,
+      #e0ebe5
+    );
+}
+
+
+.details-image-placeholder span {
+  width: 90px;
+  height: 90px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 22px;
+
+  background: #176b55;
+
+  color: white;
+
+  font-size: 40px;
+
+  font-weight: 800;
+}
+
+
+/* ========================================
+   MAIN INFORMATION
+======================================== */
+
+.approved-details-badge {
+  display: inline-block;
+
+  padding: 8px 13px;
+
+  border-radius: 30px;
+
+  background: #eef7f3;
+
+  color: #176b55;
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  letter-spacing: 1px;
+}
+
+
+.details-main-info h1 {
+  margin: 18px 0 10px;
+
+  color: #14221e;
+
+  font-size: clamp(42px, 5vw, 64px);
+
+  line-height: 1;
+
+  letter-spacing: -2.5px;
+
+  font-weight: 850;
+}
+
+
+.details-rating {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  margin-bottom: 20px;
+}
+
+
+.details-rating span {
+  color: #e99820;
+
+  font-size: 19px;
+}
+
+
+.details-rating strong {
+  color: #1a2823;
+
+  font-size: 16px;
+}
+
+
+.details-rating small {
+  color: #7c8984;
+
+  font-size: 13px;
+}
+
+
+.details-description {
+  max-width: 570px;
+
+  color: #596963;
+
+  font-size: 16px;
+
+  line-height: 1.7;
+}
+
+
+.details-location,
+.details-address {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+
+  margin-top: 20px;
+
+  padding-top: 17px;
+
+  border-top: 1px solid #e3e8e5;
+}
+
+
+.details-location span,
+.details-address span {
+  color: #7b8984;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.8px;
+}
+
+
+.details-location strong,
+.details-address strong {
+  color: #1b2925;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+}
+
+
+/* ========================================
+   SECTION HEADING
+======================================== */
+
+.meal-plans-section,
+.details-menu-section {
+  margin-top: 85px;
+}
+
+
+.details-section-heading span {
+  color: #176b55;
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  letter-spacing: 1.5px;
+}
+
+
+.details-section-heading h2 {
+  margin: 9px 0 8px;
+
+  color: #15221e;
+
+  font-size: 34px;
+
+  letter-spacing: -1px;
+}
+
+
+.details-section-heading p {
+  margin: 0;
+
+  color: #687772;
+
+  font-size: 15px;
+}
+
+
+/* ========================================
+   MEAL PLANS
+======================================== */
+
+.meal-plans-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, 1fr);
+
+  gap: 25px;
+
+  margin-top: 30px;
+}
+
+
+.meal-plan-card {
+  position: relative;
+
+  padding: 28px;
+
+  border: 1px solid #dfe6e2;
+
+  border-radius: 18px;
+
+  background: white;
+
+  box-shadow:
+    0 8px 25px rgba(25, 55, 45, 0.05);
+}
+
+
+.meal-plan-card.featured {
+  border-color: #176b55;
+
+  box-shadow:
+    0 10px 30px rgba(23, 107, 85, 0.10);
+}
+
+
+.plan-featured-label {
+  position: absolute;
+
+  top: 15px;
+  right: 15px;
+
+  padding: 6px 9px;
+
+  border-radius: 20px;
+
+  background: #176b55;
+
+  color: white;
+
+  font-size: 9px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.7px;
+}
+
+
+.meal-plan-top {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+}
+
+
+.meal-plan-top span {
+  color: #687772;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.8px;
+}
+
+
+.meal-plan-top strong {
+  color: #176b55;
+
+  font-size: 27px;
+
+  font-weight: 800;
+}
+
+
+.meal-plan-card p {
+  min-height: 45px;
+
+  margin: 15px 0 22px;
+
+  color: #687772;
+
+  font-size: 14px;
+
+  line-height: 1.6;
+}
+
+
+.order-button {
+  width: 100%;
+
+  height: 45px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #176b55;
+
+  color: white;
+
+  font-family: inherit;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+.order-button:hover {
+  background: #125642;
+}
+
+
+.order-button span {
+  font-size: 17px;
+}
+
+
+/* ========================================
+   MENU
+======================================== */
+
+.details-menu-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 18px;
+
+  margin-top: 30px;
+}
+
+
+.details-menu-card {
+  display: flex;
+
+  align-items: center;
+
+  gap: 15px;
+
+  padding: 20px;
+
+  border: 1px solid #e1e7e3;
+
+  border-radius: 14px;
+
+  background: white;
+}
+
+
+.menu-card-number {
+  width: 38px;
+  height: 38px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #eef6f2;
+
+  color: #176b55;
+
+  font-size: 22px;
+}
+
+
+.details-menu-card h3 {
+  margin: 0 0 5px;
+
+  color: #182620;
+
+  font-size: 15px;
+}
+
+
+.details-menu-card p {
+  margin: 0;
+
+  color: #74817d;
+
+  font-size: 12px;
+}
+
+
+.no-menu {
+  margin-top: 30px;
+
+  padding: 35px;
+
+  border: 1px solid #e2e7e4;
+
+  border-radius: 15px;
+
+  background: white;
+
+  text-align: center;
+}
+
+
+.no-menu h3 {
+  margin: 0 0 8px;
+
+  font-size: 17px;
+}
+
+
+.no-menu p {
+  margin: 0;
+
+  color: #71807a;
+
+  font-size: 13px;
+}
+
+
+/* ========================================
+   CAPACITY
+======================================== */
+
+.capacity-section {
+  margin-top: 60px;
+
+  padding: 30px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  border-radius: 18px;
+
+  background: #edf6f1;
+}
+
+
+.capacity-section > div:first-child span {
+  color: #176b55;
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  letter-spacing: 1px;
+}
+
+
+.capacity-section h2 {
+  margin: 8px 0 0;
+
+  color: #182620;
+
+  font-size: 25px;
+}
+
+
+.capacity-number {
+  display: flex;
+
+  align-items: baseline;
+
+  gap: 7px;
+}
+
+
+.capacity-number strong {
+  color: #176b55;
+
+  font-size: 38px;
+}
+
+
+.capacity-number span {
+  color: #66766f;
+
+  font-size: 13px;
+}
+
+
+/* ========================================
+   LOADING / ERROR
+======================================== */
+
+.mess-details-loading {
+  min-height: 70vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #64736d;
+
+  font-size: 16px;
+}
+
+
+.mess-details-error {
+  width: min(600px, 90%);
+
+  margin: 150px auto;
+
+  padding: 40px;
+
+  border: 1px solid #e2e7e4;
+
+  border-radius: 18px;
+
+  background: white;
+
+  text-align: center;
+}
+
+
+.mess-details-error h2 {
+  margin: 0 0 10px;
+}
+
+
+.mess-details-error p {
+  color: #687772;
+}
+
+
+.mess-details-error button {
+  margin-top: 15px;
+
+  padding: 11px 20px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #176b55;
+
+  color: white;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* ========================================
+   FOOTER
+======================================== */
+
+.details-footer {
+  padding: 45px 7% 25px;
+
+  border-top: 1px solid #e3e7e3;
+
+  background: #f7f8f4;
+}
+
+
+.details-footer p {
+  margin: 10px 0 0;
+
+  color: #66756f;
+
+  font-size: 13px;
+}
+
+
+.details-footer-bottom {
+  margin-top: 35px;
+
+  padding-top: 18px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  border-top: 1px solid #dfe4e0;
+
+  color: #7a8782;
+
+  font-size: 12px;
+}
+
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 900px) {
+
+  .details-navbar {
+    padding: 0 5%;
+  }
+
+  .details-nav-links {
+    gap: 20px;
+  }
+
+  .mess-details-container {
+    width: 90%;
+  }
+
+  .mess-details-hero {
+    grid-template-columns: 1fr;
+
+    gap: 30px;
+  }
+
+  .details-image {
+    height: 350px;
+  }
+
+  .details-menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+}
+
+
+@media (max-width: 700px) {
+
+  .details-navbar {
+    height: auto;
+
+    min-height: 75px;
+
+    padding: 14px 5%;
+
+    flex-wrap: wrap;
+  }
+
+  .details-nav-links {
+    order: 3;
+
+    width: 100%;
+
+    height: 42px;
+
+    justify-content: center;
+
+    gap: 20px;
+  }
+
+  .meal-plans-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .details-menu-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .capacity-section {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 25px;
+  }
+
+}
+
+
+@media (max-width: 500px) {
+
+  .details-nav-links {
+    gap: 12px;
+  }
+
+  .details-nav-link {
+    font-size: 12px;
+  }
+
+  .details-login-button {
+    min-width: 75px;
+
+    padding: 9px 15px;
+  }
+
+  .details-main-info h1 {
+    font-size: 42px;
+  }
+
+  .details-section-heading h2 {
+    font-size: 28px;
+  }
+
+  .details-image {
+    height: 260px;
+  }
+
+  .mess-details-container {
+    padding-top: 25px;
+  }
+
+}

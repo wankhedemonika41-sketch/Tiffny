@@ -20,7 +20,7 @@ function MessDashboard() {
 
   useEffect(() => {
     async function loadDashboard() {
-      const token = localStorage.getItem("tiffny_token");
+      const token = sessionStorage.getItem("tiffny_token");
 
       if (!token) {
         navigate("/login");
@@ -99,7 +99,7 @@ function MessDashboard() {
           message.includes("authentication") ||
           message.includes("unauthorized")
         ) {
-          localStorage.removeItem("tiffny_token");
+          sessionStorage.removeItem("tiffny_token");
           navigate("/login");
         }
       } finally {

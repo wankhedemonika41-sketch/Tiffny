@@ -1,0 +1,801 @@
+/* ========================================
+   PAGE
+======================================== */
+
+.messes-page {
+  min-height: 100vh;
+
+  background: #fffdf8;
+
+  color: #14221e;
+}
+
+
+
+/* ========================================
+   NAVIGATION
+======================================== */
+
+.messes-nav-links {
+  display: flex;
+  align-items: center;
+
+  gap: 38px;
+
+  height: 100%;
+}
+
+
+.messes-nav-link {
+  position: relative;
+
+  height: 100%;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #111;
+
+  font-family: inherit;
+
+  font-size: 15px;
+
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+
+/* HOVER */
+
+.messes-nav-link:hover {
+  color: #176b55;
+}
+
+
+/* ACTIVE MESSES */
+
+.messes-nav-link.active {
+  color: #176b55;
+
+  font-weight: 800;
+}
+
+
+/* ACTIVE UNDERLINE */
+
+.messes-nav-link.active::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  bottom: 17px;
+
+  height: 3px;
+
+  border-radius: 10px;
+
+  background: #176b55;
+}
+
+
+/* ========================================
+   LOGIN
+======================================== */
+
+.messes-login-button {
+  min-width: 96px;
+
+  padding: 11px 22px;
+
+  border: 1px solid #176b55;
+
+  border-radius: 9px;
+
+  background: transparent;
+
+  color: #176b55;
+
+  font-family: inherit;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+
+.messes-login-button:hover {
+  background: #176b55;
+
+  color: white;
+}
+
+
+/* ========================================
+   HERO
+======================================== */
+
+.messes-hero {
+  width: min(1200px, 86%);
+
+  margin: 0 auto;
+
+  padding-top: 48px;
+
+  padding-bottom: 28px;
+}
+
+
+/* LABEL */
+
+.messes-label {
+  display: inline-flex;
+
+  align-items: center;
+
+  padding: 9px 15px;
+
+  border: 1px solid #d2e3dc;
+
+  border-radius: 30px;
+
+  background: #f0f7f3;
+
+  color: #176b55;
+
+  font-size: 12px;
+
+  font-weight: 800;
+
+  letter-spacing: 1.5px;
+}
+
+
+/* HERO TITLE */
+
+.messes-hero h1 {
+  max-width: 850px;
+
+  margin: 22px 0 14px;
+
+  color: #14221e;
+
+  font-size: clamp(48px, 5.3vw, 76px);
+
+  line-height: 0.98;
+
+  letter-spacing: -3px;
+
+  font-weight: 850;
+}
+
+
+.messes-hero h1 span {
+  display: inline;
+
+  color: #176b55;
+}
+
+
+/* HERO DESCRIPTION */
+
+.messes-hero p {
+  max-width: 760px;
+
+  margin: 0;
+
+  color: #53645e;
+
+  font-size: 17px;
+
+  line-height: 1.65;
+}
+
+
+/* ========================================
+   LOADING
+======================================== */
+
+.messes-loading {
+  width: min(1200px, 86%);
+
+  margin: 20px auto;
+
+  padding: 50px;
+
+  text-align: center;
+
+  color: #53645e;
+
+  font-size: 16px;
+}
+
+
+/* ========================================
+   ERROR
+======================================== */
+
+.messes-error {
+  width: min(1200px, 86%);
+
+  margin: 20px auto;
+
+  padding: 18px 22px;
+
+  border: 1px solid #edcaca;
+
+  border-radius: 12px;
+
+  background: #fff4f4;
+
+  color: #a33a3a;
+}
+
+
+/* ========================================
+   EMPTY
+======================================== */
+
+.messes-empty {
+  width: min(1200px, 86%);
+
+  margin: 20px auto 60px;
+
+  padding: 60px 30px;
+
+  text-align: center;
+
+  border: 1px solid #e5e8e3;
+
+  border-radius: 18px;
+
+  background: white;
+}
+
+
+.messes-empty h2 {
+  margin: 0 0 10px;
+
+  color: #17231f;
+
+  font-size: 25px;
+}
+
+
+.messes-empty p {
+  margin: 0;
+
+  color: #687873;
+}
+
+
+/* ========================================
+   MESSES GRID
+======================================== */
+
+.messes-grid {
+  width: min(1200px, 86%);
+
+  margin: 0 auto;
+
+  padding-bottom: 70px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 28px;
+}
+
+
+/* ========================================
+   MESS CARD
+======================================== */
+
+.mess-card {
+  overflow: hidden;
+
+  background: white;
+
+  border: 1px solid #e2e6e2;
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 8px 30px rgba(25, 55, 45, 0.07);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+.mess-card:hover {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 15px 40px rgba(25, 55, 45, 0.12);
+}
+
+
+/* ========================================
+   CARD IMAGE
+======================================== */
+
+.mess-card-image {
+  height: 225px;
+
+  position: relative;
+
+  overflow: hidden;
+
+  background: #eaf1ed;
+}
+
+
+.mess-card-image img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+
+/* ========================================
+   IMAGE PLACEHOLDER
+======================================== */
+
+.mess-image-placeholder {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    linear-gradient(
+      135deg,
+      #edf5f1,
+      #e3ece7
+    );
+}
+
+
+.placeholder-icon {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 2px solid #9ac3b5;
+
+  border-radius: 8px;
+
+  color: #176b55;
+
+  font-size: 28px;
+
+  font-weight: 400;
+}
+
+
+/* ========================================
+   APPROVED BADGE
+======================================== */
+
+.approved-badge {
+  position: absolute;
+
+  top: 14px;
+  left: 14px;
+
+  padding: 7px 12px;
+
+  border-radius: 30px;
+
+  background: #f3fbf7;
+
+  color: #176b55;
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.7px;
+}
+
+
+/* ========================================
+   CARD CONTENT
+======================================== */
+
+.mess-card-content {
+  padding: 20px;
+}
+
+
+/* ========================================
+   NAME + RATING
+======================================== */
+
+.mess-card-heading {
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  gap: 15px;
+}
+
+
+.mess-card-heading h2 {
+  margin: 0;
+
+  color: #12201c;
+
+  font-size: 22px;
+
+  line-height: 1.2;
+
+  font-weight: 800;
+
+  letter-spacing: -0.5px;
+}
+
+
+/* ========================================
+   RATING
+======================================== */
+
+.mess-rating {
+  display: flex;
+
+  align-items: center;
+
+  gap: 4px;
+
+  white-space: nowrap;
+}
+
+
+.mess-rating span {
+  color: #e99820;
+
+  font-size: 14px;
+}
+
+
+.mess-rating strong {
+  color: #18221f;
+
+  font-size: 13px;
+}
+
+
+.mess-rating small {
+  color: #8a9792;
+
+  font-size: 12px;
+}
+
+
+/* ========================================
+   DESCRIPTION
+======================================== */
+
+.mess-description {
+  min-height: 45px;
+
+  margin: 10px 0 16px;
+
+  color: #63736e;
+
+  font-size: 14px;
+
+  line-height: 1.6;
+}
+
+
+/* ========================================
+   INFO ROW
+======================================== */
+
+.mess-info-row {
+  display: grid;
+
+  grid-template-columns:
+    1.25fr 1fr 1fr;
+
+  border-top: 1px solid #e7ebe8;
+
+  border-bottom: 1px solid #e7ebe8;
+
+  padding: 14px 0;
+
+  margin-bottom: 16px;
+}
+
+
+.mess-info-item {
+  min-width: 0;
+
+  padding: 0 13px;
+
+  border-right: 1px solid #e3e8e5;
+}
+
+
+.mess-info-item:first-child {
+  padding-left: 0;
+}
+
+
+.mess-info-item:last-child {
+  padding-right: 0;
+
+  border-right: none;
+}
+
+
+.info-title {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #7b8984;
+
+  font-size: 11px;
+
+  font-weight: 600;
+}
+
+
+.mess-info-item strong {
+  display: block;
+
+  overflow: hidden;
+
+  color: #1b2925;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
+}
+
+
+/* ========================================
+   VIEW DETAILS
+======================================== */
+
+.view-details-button {
+  width: 100%;
+
+  height: 43px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #176b55;
+
+  color: white;
+
+  font-family: inherit;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.view-details-button:hover {
+  background: #125642;
+
+  transform: translateY(-1px);
+}
+
+
+.view-details-button span {
+  font-size: 18px;
+}
+
+
+/* ========================================
+   FOOTER
+======================================== */
+
+.messes-footer {
+  padding: 45px 7% 25px;
+
+  border-top: 1px solid #e3e7e3;
+
+  background: #f7f8f4;
+}
+
+
+.footer-brand p {
+  margin: 10px 0 0;
+
+  color: #66756f;
+
+  font-size: 13px;
+}
+
+
+.footer-bottom {
+  margin-top: 35px;
+
+  padding-top: 18px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  border-top: 1px solid #dfe4e0;
+
+  color: #7a8782;
+
+  font-size: 12px;
+}
+
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 900px) {
+
+  .messes-navbar {
+    padding: 0 5%;
+  }
+
+  .messes-nav-links {
+    gap: 20px;
+  }
+
+  .messes-hero,
+  .messes-grid {
+    width: 90%;
+  }
+
+  .messes-hero h1 {
+    font-size: 55px;
+  }
+
+}
+
+
+@media (max-width: 720px) {
+
+  .messes-navbar {
+    height: auto;
+
+    min-height: 75px;
+
+    padding: 14px 5%;
+
+    flex-wrap: wrap;
+  }
+
+  .messes-nav-links {
+    order: 3;
+
+    width: 100%;
+
+    height: 45px;
+
+    justify-content: center;
+
+    gap: 22px;
+  }
+
+  .messes-nav-link.active::after {
+    bottom: 2px;
+  }
+
+  .messes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .messes-hero h1 {
+    font-size: 48px;
+
+    letter-spacing: -2px;
+  }
+
+}
+
+
+@media (max-width: 500px) {
+
+  .messes-brand span {
+    font-size: 22px;
+  }
+
+  .messes-brand-mark {
+    width: 36px;
+    height: 36px;
+  }
+
+  .messes-nav-links {
+    gap: 14px;
+  }
+
+  .messes-nav-link {
+    font-size: 12px;
+  }
+
+  .messes-login-button {
+    min-width: 75px;
+
+    padding: 9px 15px;
+  }
+
+  .messes-hero {
+    padding-top: 35px;
+  }
+
+  .messes-hero h1 {
+    font-size: 40px;
+  }
+
+  .messes-hero p {
+    font-size: 15px;
+  }
+
+  .mess-card-image {
+    height: 200px;
+  }
+
+  .mess-info-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .mess-info-item {
+    padding: 0;
+
+    border-right: none;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+
+    gap: 8px;
+  }
+
+}

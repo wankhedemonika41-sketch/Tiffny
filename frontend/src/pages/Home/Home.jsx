@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
+import Navbar from "../../components/Navbar/Navbar";
+
 import "./Home.css";
 
 function Home() {
@@ -12,45 +14,7 @@ function Home() {
           NAVBAR
       ======================================== */}
 
-      <header className="navbar">
-
-        <div className="brand">
-
-          <div className="brand-mark">
-            T
-          </div>
-
-          <span>tiffny</span>
-
-        </div>
-
-
-        <nav className="nav-links">
-
-          <a href="#how-it-works">
-            How It Works
-          </a>
-
-          <a href="#about">
-            About
-          </a>
-
-          <a href="#contact">
-            Contact
-          </a>
-
-        </nav>
-
-
-        <button
-          className="nav-login-button"
-          onClick={() => navigate("/login")}
-        >
-          Login
-        </button>
-
-      </header>
-
+      <Navbar />
 
       {/* ========================================
           MAIN CONTENT
@@ -89,7 +53,7 @@ function Home() {
 
               <button
                 className="primary-button"
-                onClick={() => navigate("/login")}
+                onClick={() => navigate("/messes")}
               >
                 Find Your Mess
 
@@ -507,9 +471,9 @@ function Home() {
 
             <button
               className="cta-button"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/messes")}
             >
-              Get Started
+              Explore Messes
 
               <span>
                 →

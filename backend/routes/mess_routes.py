@@ -17,7 +17,8 @@ from auth.auth_roles import require_role
 from schemas.mess_schema import (
     MessRegistrationSchema,
     MessProfileSchema,
-    MessUpdateSchema
+    MessUpdateSchema,
+    PublicMessSchema
 )
 
 from schemas.menu_schema import (
@@ -28,6 +29,7 @@ from schemas.menu_schema import (
 
 from schemas.capacity_schema import CapacityUpdateSchema
 from schemas.monthly_price_schema import MonthlyPriceUpdateSchema
+from schemas.one_time_price_schema import OneTimePriceUpdateSchema
 
 from models.mess_model import create_mess_document
 from models.menu_model import create_menu_document
@@ -133,8 +135,11 @@ async def save_uploaded_file(
 @router.post("/register")
 def register_mess(
     mess: MessRegistrationSchema,
-    current_user=Depends(require_role("MESS_OWNER"))
+    current_user=Depends(
+        require_role("MESS_OWNER")
+    )
 ):
+
     # Check if owner already has a mess
     existing_mess = messes_collection.find_one({
         "owner_id": str(current_user["_id"])
@@ -195,6 +200,7 @@ async def submit_mess_profile(
         require_role("MESS_OWNER")
     )
 ):
+
     owner_id = str(current_user["_id"])
 
     # -----------------------------------------------------
@@ -278,6 +284,180 @@ async def submit_mess_profile(
 
 
 # =========================================================
+# PUBLIC - GET ALL APPROVED MESSES
+# =========================================================
+
+@router.get(
+    "/approved",
+    response_model=list[PublicMessSchema]
+)
+def get_approved_messes():
+
+    approved_messes = list(
+        messes_collection.find({
+            "status": "APPROVED"
+        }).sort(
+            "created_at",
+            -1
+        )
+    )
+
+    result = []
+
+    for mess in approved_messes:
+
+        result.append({
+            "mess_id": str(mess["_id"]),
+            "mess_name": mess["mess_name"],
+            "description": mess["description"],
+            "phone": mess["phone"],
+            "address": mess["address"],
+            "location": mess["location"],
+            "photo": mess.get("photo"),
+            "rating": mess.get(
+                "rating",
+                0
+            ),
+            "total_reviews": mess.get(
+                "total_reviews",
+                0
+            ),
+            "max_capacity": mess.get(
+                "max_capacity"
+            ),
+            "monthly_price": mess.get(
+                "monthly_price"
+            ),
+            "one_time_price": mess.get(
+                "one_time_price"
+            )
+        })
+
+    return result
+
+
+# =========================================================
+# PUBLIC - GET ONE APPROVED MESS DETAILS
+# =========================================================
+
+@router.get("/public/{mess_id}")
+def get_public_mess_details(
+    mess_id: str
+):
+
+    # -----------------------------------------------------
+    # VALIDATE MESS ID
+    # -----------------------------------------------------
+
+    try:
+        mess_object_id = ObjectId(mess_id)
+
+    except Exception:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid mess ID"
+        )
+
+    # -----------------------------------------------------
+    # FIND ONLY APPROVED MESS
+    # -----------------------------------------------------
+
+    mess = messes_collection.find_one({
+        "_id": mess_object_id,
+        "status": "APPROVED"
+    })
+
+    if mess is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Approved mess not found"
+        )
+
+    # -----------------------------------------------------
+    # GET MENU
+    # -----------------------------------------------------
+
+    menu_collection = db["menus"]
+
+    menu_items = list(
+        menu_collection.find({
+            "mess_id": str(mess["_id"])
+        })
+    )
+
+    menu_result = []
+
+    for item in menu_items:
+
+        menu_result.append({
+            "meal_id": str(item["_id"]),
+            "mess_id": item.get(
+                "mess_id"
+            ),
+            "meal_name": item.get(
+                "meal_name"
+            ),
+            "description": item.get(
+                "description"
+            ),
+            "meal_type": item.get(
+                "meal_type"
+            ),
+            "price": item.get(
+                "price"
+            ),
+            "available": item.get(
+                "available",
+                True
+            )
+        })
+
+    # -----------------------------------------------------
+    # RETURN PUBLIC DETAILS
+    # -----------------------------------------------------
+
+    return {
+        "mess_id": str(mess["_id"]),
+        "mess_name": mess.get(
+            "mess_name"
+        ),
+        "description": mess.get(
+            "description"
+        ),
+        "phone": mess.get(
+            "phone"
+        ),
+        "address": mess.get(
+            "address"
+        ),
+        "location": mess.get(
+            "location"
+        ),
+        "photo": mess.get(
+            "photo"
+        ),
+        "rating": mess.get(
+            "rating",
+            0
+        ),
+        "total_reviews": mess.get(
+            "total_reviews",
+            0
+        ),
+        "max_capacity": mess.get(
+            "max_capacity"
+        ),
+        "monthly_price": mess.get(
+            "monthly_price"
+        ),
+        "one_time_price": mess.get(
+            "one_time_price"
+        ),
+        "menu": menu_result
+    }
+
+
+# =========================================================
 # VIEW OWN MESS PROFILE
 # =========================================================
 
@@ -290,6 +470,7 @@ def get_mess_profile(
         require_role("MESS_OWNER")
     )
 ):
+
     mess = messes_collection.find_one({
         "owner_id": str(current_user["_id"])
     })
@@ -308,7 +489,9 @@ def get_mess_profile(
         "phone": mess["phone"],
         "address": mess["address"],
         "location": mess["location"],
-        "photo": mess.get("photo"),
+        "photo": mess.get(
+            "photo"
+        ),
         "verification_proof": mess.get(
             "verification_proof"
         ),
@@ -329,6 +512,9 @@ def get_mess_profile(
         ),
         "monthly_price": mess.get(
             "monthly_price"
+        ),
+        "one_time_price": mess.get(
+            "one_time_price"
         )
     }
 
@@ -344,6 +530,7 @@ def update_mess_profile(
         require_role("MESS_OWNER")
     )
 ):
+
     result = messes_collection.update_one(
         {
             "owner_id": str(current_user["_id"])
@@ -374,6 +561,7 @@ def update_mess_profile(
         )
     }
 
+
 # =========================================================
 # UPLOAD NEW MESS IMAGE
 # =========================================================
@@ -385,6 +573,7 @@ async def upload_mess_photo(
         require_role("MESS_OWNER")
     )
 ):
+
     owner_id = str(current_user["_id"])
 
     photo_path = await save_uploaded_file(
@@ -401,7 +590,7 @@ async def upload_mess_photo(
     return {
         "message": "Image uploaded successfully",
         "photo": photo_path
-}
+    }
 
 
 # =========================================================
@@ -415,6 +604,7 @@ def update_mess_capacity(
         require_role("MESS_OWNER")
     )
 ):
+
     result = messes_collection.update_one(
         {
             "owner_id": str(current_user["_id"])
@@ -452,6 +642,7 @@ def update_monthly_price(
         require_role("MESS_OWNER")
     )
 ):
+
     result = messes_collection.update_one(
         {
             "owner_id": str(current_user["_id"])
@@ -481,6 +672,46 @@ def update_monthly_price(
 
 
 # =========================================================
+# UPDATE ONE-TIME PRICE
+# =========================================================
+
+@router.put("/one-time-price")
+def update_one_time_price(
+    one_time_price: OneTimePriceUpdateSchema,
+    current_user=Depends(
+        require_role("MESS_OWNER")
+    )
+):
+
+    result = messes_collection.update_one(
+        {
+            "owner_id": str(current_user["_id"])
+        },
+        {
+            "$set": {
+                "one_time_price": (
+                    one_time_price.one_time_price
+                )
+            }
+        }
+    )
+
+    if result.matched_count == 0:
+        return {
+            "message": "Mess profile not found"
+        }
+
+    return {
+        "message": (
+            "One-time price updated successfully"
+        ),
+        "one_time_price": (
+            one_time_price.one_time_price
+        )
+    }
+
+
+# =========================================================
 # ADD MEAL TO MENU
 # =========================================================
 
@@ -491,6 +722,7 @@ def add_menu_item(
         require_role("MESS_OWNER")
     )
 ):
+
     # Find the mess owned by the logged-in owner
     mess = messes_collection.find_one({
         "owner_id": str(current_user["_id"])
@@ -511,7 +743,7 @@ def add_menu_item(
         available=menu.available
     )
 
-    # Get the menu collection
+    # Get menu collection
     menu_collection = db["menus"]
 
     # Insert menu item
@@ -541,7 +773,8 @@ def get_menu(
         require_role("MESS_OWNER")
     )
 ):
-    # Find the mess owned by the logged-in owner
+
+    # Find the mess owned by logged-in owner
     mess = messes_collection.find_one({
         "owner_id": str(current_user["_id"])
     })
@@ -549,10 +782,10 @@ def get_menu(
     if mess is None:
         return []
 
-    # Get the menu collection
+    # Get menu collection
     menu_collection = db["menus"]
 
-    # Find all menu items belonging to this mess
+    # Find all menu items
     menu_items = list(
         menu_collection.find({
             "mess_id": str(mess["_id"])
@@ -562,6 +795,7 @@ def get_menu(
     result = []
 
     for item in menu_items:
+
         result.append({
             "meal_id": str(item["_id"]),
             "mess_id": item["mess_id"],
@@ -587,7 +821,8 @@ def update_menu_item(
         require_role("MESS_OWNER")
     )
 ):
-    # Find the mess owned by the logged-in owner
+
+    # Find owner's mess
     mess = messes_collection.find_one({
         "owner_id": str(current_user["_id"])
     })
@@ -597,14 +832,23 @@ def update_menu_item(
             "message": "Mess profile not found"
         }
 
-    # Get the menu collection
+    # Get menu collection
     menu_collection = db["menus"]
 
-    # Update only the meal that belongs
-    # to this owner's mess
+    # Validate meal ID
+    try:
+        meal_object_id = ObjectId(meal_id)
+
+    except Exception:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid meal ID"
+        )
+
+    # Update only owner's meal
     result = menu_collection.update_one(
         {
-            "_id": ObjectId(meal_id),
+            "_id": meal_object_id,
             "mess_id": str(mess["_id"])
         },
         {
@@ -640,7 +884,8 @@ def delete_menu_item(
         require_role("MESS_OWNER")
     )
 ):
-    # Find the mess owned by the logged-in owner
+
+    # Find owner's mess
     mess = messes_collection.find_one({
         "owner_id": str(current_user["_id"])
     })
@@ -650,14 +895,23 @@ def delete_menu_item(
             "message": "Mess profile not found"
         }
 
-    # Get the menu collection
+    # Get menu collection
     menu_collection = db["menus"]
 
-    # Delete only the meal that belongs
-    # to this owner's mess
+    # Validate meal ID
+    try:
+        meal_object_id = ObjectId(meal_id)
+
+    except Exception:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid meal ID"
+        )
+
+    # Delete only owner's meal
     result = menu_collection.delete_one(
         {
-            "_id": ObjectId(meal_id),
+            "_id": meal_object_id,
             "mess_id": str(mess["_id"])
         }
     )

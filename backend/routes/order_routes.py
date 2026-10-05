@@ -577,8 +577,6 @@ def update_order_status(
 
     allowed_statuses = [
         "CONFIRMED",
-        "PREPARING",
-        "READY",
         "COMPLETED",
         "CANCELLED"
     ]
@@ -591,8 +589,7 @@ def update_order_status(
         raise HTTPException(
             status_code=400,
             detail=(
-                "Invalid status. Use CONFIRMED, PREPARING, "
-                "READY, COMPLETED or CANCELLED."
+                "Invalid status. Use CONFIRMED,COMPLETED or CANCELLED."
             )
         )
 

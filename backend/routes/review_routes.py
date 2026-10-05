@@ -273,3 +273,105 @@ def get_mess_reviews(
         })
 
     return result
+
+
+# =========================================================
+# MESS OWNER → VIEW REVIEWS
+# =========================================================
+
+@router.get(
+    "/owner-reviews"
+)
+def get_owner_reviews(
+    current_user=Depends(require_role("MESS_OWNER"))
+):
+
+    # -----------------------------------------------------
+    # Get collections
+    # -----------------------------------------------------
+
+    review_collection = db["reviews"]
+    mess_collection = db["messes"]
+    users_collection = db["users"]
+
+    # -----------------------------------------------------
+    # Find mess owned by logged-in owner
+    # -----------------------------------------------------
+
+    mess = mess_collection.find_one({
+        "owner_id": str(current_user["_id"])
+    })
+
+    if mess is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Mess profile not found"
+        )
+
+    mess_id = str(mess["_id"])
+
+    # -----------------------------------------------------
+    # Get reviews for owner's mess
+    # -----------------------------------------------------
+
+    reviews = list(
+        review_collection.find({
+            "mess_id": mess_id
+        }).sort("created_at", -1)
+    )
+
+    result = []
+
+    # -----------------------------------------------------
+    # Prepare reviews
+    # -----------------------------------------------------
+
+    for review in reviews:
+
+        # -------------------------------------------------
+        # Find student
+        # -------------------------------------------------
+
+        try:
+            student = users_collection.find_one({
+                "_id": ObjectId(review["student_id"])
+            })
+
+        except Exception:
+            student = None
+
+        if student:
+            student_name = student.get(
+                "name",
+                "Student"
+            )
+        else:
+            student_name = "Student"
+
+        # -------------------------------------------------
+        # Convert date
+        # -------------------------------------------------
+
+        created_at = review.get("created_at")
+
+        if created_at:
+            created_at = created_at.isoformat()
+        else:
+            created_at = ""
+
+        # -------------------------------------------------
+        # Add review
+        # -------------------------------------------------
+
+        result.append({
+            "review_id": str(review["_id"]),
+            "order_id": review["order_id"],
+            "student_id": review["student_id"],
+            "student_name": student_name,
+            "mess_id": review["mess_id"],
+            "rating": review["rating"],
+            "review": review["review"],
+            "created_at": created_at
+        })
+
+    return result

@@ -6,14 +6,15 @@ function MessOwnerLayout() {
   const navigate = useNavigate();
 
   const ownerName =
-    localStorage.getItem("tiffny_user_name") || "Mess Owner";
+    sessionStorage.getItem("tiffny_user_name") || "Mess Owner";
 
   const firstLetter = ownerName.charAt(0).toUpperCase();
 
   function handleLogout() {
-    localStorage.removeItem("tiffny_token");
-    localStorage.removeItem("tiffny_user_name");
-    localStorage.removeItem("tiffny_user_role");
+    sessionStorage.removeItem("tiffny_token");
+    sessionStorage.removeItem("tiffny_user_id");
+    sessionStorage.removeItem("tiffny_user_name");
+    sessionStorage.removeItem("tiffny_user_role");
 
     navigate("/login");
   }
@@ -31,6 +32,8 @@ function MessOwnerLayout() {
 
       <aside className="mess-owner-sidebar">
 
+        {/* Brand */}
+
         <div className="mess-owner-brand">
           <div className="mess-owner-brand-mark">
             T
@@ -38,6 +41,9 @@ function MessOwnerLayout() {
 
           <span>tiffny</span>
         </div>
+
+
+        {/* Owner Information */}
 
         <div className="mess-owner-user">
 
@@ -52,9 +58,15 @@ function MessOwnerLayout() {
 
         </div>
 
+
+        {/* Navigation */}
+
         <nav className="mess-owner-navigation">
 
+          {/* Dashboard Section */}
+
           <div className="mess-owner-nav-section">
+
             <p>DASHBOARD</p>
 
             <NavLink
@@ -62,19 +74,33 @@ function MessOwnerLayout() {
               className={getNavClass}
               end
             >
-              <span className="nav-number">01</span>
-              <span>Dashboard</span>
+              <span className="nav-number">
+                01
+              </span>
+
+              <span>
+                Dashboard
+              </span>
             </NavLink>
+
 
             <NavLink
               to="/mess/profile"
               className={getNavClass}
             >
-              <span className="nav-number">02</span>
-              <span>Mess Profile</span>
+              <span className="nav-number">
+                02
+              </span>
+
+              <span>
+                Mess Profile
+              </span>
             </NavLink>
+
           </div>
 
+
+          {/* Management Section */}
 
           <div className="mess-owner-nav-section">
 
@@ -84,40 +110,69 @@ function MessOwnerLayout() {
               to="/mess/menu"
               className={getNavClass}
             >
-              <span className="nav-number">03</span>
-              <span>Menu</span>
+              <span className="nav-number">
+                03
+              </span>
+
+              <span>
+                Menu
+              </span>
             </NavLink>
+
 
             <NavLink
               to="/mess/capacity"
               className={getNavClass}
             >
-              <span className="nav-number">04</span>
-              <span>Capacity</span>
+              <span className="nav-number">
+                04
+              </span>
+
+              <span>
+                Capacity
+              </span>
             </NavLink>
+
 
             <NavLink
               to="/mess/monthly-price"
               className={getNavClass}
             >
-              <span className="nav-number">05</span>
-              <span>Monthly Price</span>
+              <span className="nav-number">
+                05
+              </span>
+
+              <span>
+                Monthly Price
+              </span>
             </NavLink>
+
 
             <NavLink
               to="/mess/orders"
               className={getNavClass}
             >
-              <span className="nav-number">06</span>
-              <span>Orders</span>
+              <span className="nav-number">
+                06
+              </span>
+
+              <span>
+                Orders
+              </span>
             </NavLink>
+
 
             <NavLink
               to="/mess/reviews"
               className={getNavClass}
             >
-              <span className="nav-number">07</span>
-              <span>Reviews</span>
+              <span className="nav-number">
+                07
+              </span>
+
+              <span>
+                Reviews
+              </span>
             </NavLink>
 
           </div>
@@ -125,12 +180,19 @@ function MessOwnerLayout() {
         </nav>
 
 
+        {/* Logout */}
+
         <button
           className="mess-owner-logout"
           onClick={handleLogout}
         >
-          <span className="logout-arrow">↪</span>
-          <span>Logout</span>
+          <span className="logout-arrow">
+            →
+          </span>
+
+          <span>
+            Logout
+          </span>
         </button>
 
       </aside>

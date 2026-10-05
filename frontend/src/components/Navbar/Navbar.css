@@ -1,0 +1,413 @@
+/* =========================================================
+   NAVBAR
+========================================================= */
+
+.navbar {
+  width: calc(100% - 64px);
+  margin: 20px auto 0;
+  min-height: 78px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 32px;
+
+  background: #fffdf8;
+  border-bottom: 1px solid #e4e7e2;
+
+  position: relative;
+  z-index: 100;
+}
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  text-decoration: none;
+  color: #111b18;
+
+  flex-shrink: 0;
+}
+
+.brand-mark {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #176f5c;
+  color: white;
+
+  border-radius: 11px;
+
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.brand-name {
+  font-size: 27px;
+  font-weight: 800;
+
+  letter-spacing: -0.8px;
+}
+
+
+/* =========================================================
+   NAVIGATION LINKS
+========================================================= */
+
+.nav-links {
+  display: flex;
+  align-items: center;
+
+  gap: 36px;
+
+  margin-left: auto;
+  margin-right: 70px;
+}
+
+.nav-link {
+  position: relative;
+
+  color: #111;
+  text-decoration: none;
+
+  font-size: 16px;
+  font-weight: 500;
+
+  padding: 28px 0 25px;
+
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #176f5c;
+}
+
+.nav-link.active {
+  color: #176f5c;
+  font-weight: 700;
+}
+
+.nav-link.active::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  bottom: 17px;
+
+  height: 3px;
+
+  background: #176f5c;
+
+  border-radius: 10px;
+}
+
+
+/* =========================================================
+   RIGHT SIDE
+========================================================= */
+
+.navbar-right {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  flex-shrink: 0;
+}
+
+
+/* =========================================================
+   LOGIN BUTTON
+========================================================= */
+
+.nav-login-button {
+  min-width: 96px;
+  height: 44px;
+
+  padding: 0 22px;
+
+  border: 1px solid #176f5c;
+  border-radius: 9px;
+
+  background: transparent;
+  color: #176f5c;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.nav-login-button:hover {
+  background: #176f5c;
+  color: white;
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   LOGGED-IN USER BUTTON
+========================================================= */
+
+.navbar-user {
+  position: relative;
+}
+
+.navbar-user-button {
+  height: 44px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 0 16px;
+
+  border: 1px solid #176f5c;
+  border-radius: 9px;
+
+  background: #f4faf7;
+  color: #176f5c;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.navbar-user-button:hover {
+  background: #e8f4ef;
+  border-color: #125c4c;
+}
+
+.welcome-text {
+  white-space: nowrap;
+}
+
+.dropdown-arrow {
+  font-size: 9px;
+
+  transition: transform 0.2s ease;
+}
+
+.dropdown-arrow.rotated {
+  transform: rotate(180deg);
+}
+
+
+/* =========================================================
+   USER DROPDOWN
+========================================================= */
+
+.user-dropdown {
+  position: absolute;
+
+  top: calc(100% + 10px);
+  right: 0;
+
+  width: 190px;
+
+  padding: 8px;
+
+  background: white;
+
+  border: 1px solid #e1e7e3;
+  border-radius: 12px;
+
+  box-shadow: 0 12px 30px rgba(20, 50, 40, 0.12);
+
+  z-index: 200;
+}
+
+
+/* DROPDOWN BUTTONS */
+
+.user-dropdown button {
+  width: 100%;
+
+  padding: 11px 12px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: transparent;
+  color: #26332f;
+
+  text-align: left;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.user-dropdown button:hover {
+  background: #f1f7f4;
+  color: #176f5c;
+}
+
+
+/* =========================================================
+   DROPDOWN DIVIDER
+========================================================= */
+
+.dropdown-divider {
+  height: 1px;
+
+  margin: 7px 4px;
+
+  background: #e5e9e7;
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+.user-dropdown .logout-button {
+  color: #b42318;
+  font-weight: 600;
+}
+
+.user-dropdown .logout-button:hover {
+  background: #fff1ef;
+  color: #a51d13;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+  .navbar {
+    width: calc(100% - 32px);
+
+    padding: 0 20px;
+  }
+
+  .nav-links {
+    gap: 20px;
+
+    margin-right: 25px;
+  }
+
+  .nav-link {
+    font-size: 14px;
+  }
+
+}
+
+
+@media (max-width: 700px) {
+
+  .navbar {
+    flex-wrap: wrap;
+
+    min-height: auto;
+
+    padding: 16px 20px;
+  }
+
+  .nav-links {
+    order: 3;
+
+    width: 100%;
+
+    justify-content: center;
+
+    margin: 10px 0 0;
+
+    gap: 24px;
+  }
+
+  .nav-link {
+    padding: 10px 0 13px;
+  }
+
+  .nav-link.active::after {
+    bottom: 4px;
+  }
+
+}
+
+
+@media (max-width: 500px) {
+
+  .navbar {
+    width: calc(100% - 20px);
+  }
+
+  .brand-name {
+    font-size: 23px;
+  }
+
+  .brand-mark {
+    width: 38px;
+    height: 38px;
+  }
+
+  .nav-links {
+    gap: 14px;
+  }
+
+  .nav-link {
+    font-size: 13px;
+  }
+
+  .nav-login-button {
+    min-width: 78px;
+
+    padding: 0 14px;
+
+    font-size: 14px;
+  }
+
+  .navbar-user-button {
+    padding: 0 12px;
+
+    font-size: 13px;
+  }
+
+  .welcome-text {
+    max-width: 120px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .user-dropdown {
+    width: 180px;
+  }
+
+}
