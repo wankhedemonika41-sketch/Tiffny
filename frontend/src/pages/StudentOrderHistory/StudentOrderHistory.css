@@ -1,0 +1,328 @@
+.student-order-history-page {
+  min-height: 100vh;
+  padding: 40px 24px 60px;
+  background: #f6f7f9;
+}
+
+.student-order-history-container {
+  width: min(1100px, 100%);
+  margin: 0 auto;
+}
+
+/* Header */
+
+.order-history-header {
+  margin-bottom: 30px;
+}
+
+.order-history-back-button {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin-bottom: 14px;
+  color: #555;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.order-history-back-button:hover {
+  color: #111;
+}
+
+.order-history-header h1 {
+  margin: 0;
+  color: #222;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.order-history-header p {
+  margin-top: 8px;
+  color: #666;
+  font-size: 15px;
+}
+
+/* Orders List */
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Order Card */
+
+.order-history-card {
+  background: #ffffff;
+  border: 1px solid #e4e6e9;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+/* Card Top */
+
+.order-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.order-card-top h2 {
+  margin: 0;
+  color: #222;
+  font-size: 21px;
+  font-weight: 700;
+}
+
+.order-date {
+  margin: 7px 0 0;
+  color: #777;
+  font-size: 13px;
+}
+
+/* Status */
+
+.order-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 13px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-pending {
+  background: #fff4d6;
+  color: #946200;
+}
+
+.status-confirmed {
+  background: #e3f5e9;
+  color: #19713b;
+}
+
+.status-cancelled {
+  background: #fde7e7;
+  color: #b42318;
+}
+
+.status-completed {
+  background: #e9edf5;
+  color: #455468;
+}
+
+.status-active {
+  background: #e2f4f1;
+  color: #126b61;
+}
+
+/* Details */
+
+.order-card-details {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  padding: 22px 0;
+}
+
+.order-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.order-detail span {
+  color: #777;
+  font-size: 13px;
+}
+
+.order-detail strong {
+  color: #222;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.order-location {
+  grid-column: span 3;
+}
+
+/* Footer */
+
+.order-card-footer {
+  padding-top: 18px;
+  border-top: 1px solid #eeeeee;
+}
+
+.order-card-footer p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.pending-text {
+  color: #946200;
+}
+
+.confirmed-text {
+  color: #19713b;
+}
+
+.cancelled-text {
+  color: #b42318;
+}
+
+.completed-text {
+  color: #455468;
+}
+
+.active-text {
+  color: #126b61;
+}
+
+/* Payment */
+
+.payment-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.pay-now-button {
+  border: none;
+  background: #222;
+  color: #ffffff;
+  padding: 11px 22px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.pay-now-button:hover {
+  background: #000000;
+}
+
+/* Empty State */
+
+.order-history-empty {
+  background: #ffffff;
+  border: 1px solid #e4e6e9;
+  border-radius: 14px;
+  padding: 60px 30px;
+  text-align: center;
+}
+
+.order-history-empty h2 {
+  margin: 0 0 8px;
+  color: #222;
+  font-size: 23px;
+}
+
+.order-history-empty p {
+  margin: 0 0 24px;
+  color: #777;
+  font-size: 15px;
+}
+
+.find-mess-button {
+  border: none;
+  background: #222;
+  color: #ffffff;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.find-mess-button:hover {
+  background: #000000;
+}
+
+/* Loading / Error */
+
+.order-history-message {
+  background: #ffffff;
+  border: 1px solid #e4e6e9;
+  border-radius: 14px;
+  padding: 40px;
+  text-align: center;
+}
+
+.order-history-message p {
+  margin: 0;
+  color: #666;
+  font-size: 15px;
+}
+
+.error-message p {
+  color: #b42318;
+  margin-bottom: 18px;
+}
+
+.retry-button {
+  border: none;
+  background: #222;
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Responsive */
+
+@media (max-width: 800px) {
+  .order-card-details {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .order-location {
+    grid-column: span 2;
+  }
+
+  .payment-section {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 600px) {
+  .student-order-history-page {
+    padding: 30px 16px 50px;
+  }
+
+  .order-history-header h1 {
+    font-size: 27px;
+  }
+
+  .order-card-top {
+    flex-direction: column;
+  }
+
+  .order-card-details {
+    grid-template-columns: 1fr;
+  }
+
+  .order-location {
+    grid-column: span 1;
+  }
+
+  .order-history-card {
+    padding: 18px;
+  }
+
+  .order-status {
+    align-self: flex-start;
+  }
+}

@@ -1,0 +1,699 @@
+/* ========================================
+   PAGE
+======================================== */
+
+.student-order-page {
+  min-height: 100vh;
+  background: #fffdf8;
+  color: #14221e;
+}
+
+
+/* ========================================
+   CONTAINER
+======================================== */
+
+.student-order-container {
+  width: min(1200px, 86%);
+  margin: 0 auto;
+  padding: 35px 0 80px;
+}
+
+
+/* ========================================
+   BACK BUTTON
+======================================== */
+
+.order-back-button {
+  border: none;
+  padding: 0;
+  margin-bottom: 28px;
+
+  background: transparent;
+  color: #176b55;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.order-back-button:hover {
+  text-decoration: underline;
+}
+
+
+/* ========================================
+   HEADER
+======================================== */
+
+.order-header {
+  margin-bottom: 40px;
+}
+
+.order-header > span {
+  color: #176b55;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: 1.5px;
+}
+
+.order-header h1 {
+  margin: 10px 0 10px;
+
+  color: #14221e;
+
+  font-size: clamp(38px, 5vw, 58px);
+  line-height: 1;
+
+  letter-spacing: -2px;
+  font-weight: 850;
+}
+
+.order-header p {
+  max-width: 600px;
+
+  margin: 0;
+
+  color: #687772;
+
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+
+/* ========================================
+   ORDER LAYOUT
+======================================== */
+
+.order-layout {
+  display: flex;
+  flex-direction: column;
+
+  gap: 30px;
+}
+
+
+/* ========================================
+   MAIN
+======================================== */
+
+.order-main {
+  display: flex;
+  flex-direction: column;
+
+  gap: 22px;
+}
+
+
+/* ========================================
+   ORDER CARD
+======================================== */
+
+.order-card {
+  padding: 28px;
+
+  border: 1px solid #dfe6e2;
+  border-radius: 18px;
+
+  background: white;
+
+  box-shadow:
+    0 8px 25px rgba(25, 55, 45, 0.05);
+}
+
+
+/* ========================================
+   CARD TITLE
+======================================== */
+
+.order-card-title span {
+  color: #176b55;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  letter-spacing: 1.3px;
+}
+
+.order-card-title h2 {
+  margin: 7px 0 0;
+
+  color: #182620;
+
+  font-size: 23px;
+  letter-spacing: -0.5px;
+}
+
+
+/* ========================================
+   MESS INFORMATION
+======================================== */
+
+.order-mess-info {
+  display: flex;
+
+  align-items: center;
+
+  gap: 18px;
+
+  margin-top: 22px;
+}
+
+.order-mess-info img {
+  width: 105px;
+  height: 90px;
+
+  flex-shrink: 0;
+
+  object-fit: cover;
+
+  border-radius: 12px;
+}
+
+.order-mess-info strong {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: #182620;
+
+  font-size: 16px;
+}
+
+.order-mess-info p {
+  margin: 0 0 8px;
+
+  color: #687772;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.order-rating {
+  color: #e99820;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+
+/* ========================================
+   SELECTED PLAN
+======================================== */
+
+.selected-plan {
+  margin-top: 22px;
+
+  padding: 20px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  border-radius: 13px;
+
+  background: #f3f8f5;
+}
+
+.selected-plan strong {
+  color: #182620;
+
+  font-size: 16px;
+}
+
+.selected-plan p {
+  margin: 6px 0 0;
+
+  color: #71807a;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.selected-plan .plan-price {
+  color: #176b55;
+
+  font-size: 25px;
+
+  white-space: nowrap;
+}
+
+
+/* ========================================
+   MEAL MODE
+======================================== */
+
+.mode-options {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 15px;
+
+  margin-top: 22px;
+}
+
+.mode-option {
+  min-height: 95px;
+
+  padding: 18px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  border: 1px solid #dfe6e2;
+  border-radius: 13px;
+
+  background: white;
+
+  font-family: inherit;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.mode-option:hover {
+  border-color: #176b55;
+
+  transform: translateY(-2px);
+}
+
+.mode-option.selected {
+  border: 2px solid #176b55;
+
+  background: #f0f8f4;
+}
+
+.mode-icon {
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  background: #e8f3ee;
+
+  color: #176b55;
+
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.mode-option strong {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #182620;
+
+  font-size: 14px;
+}
+
+.mode-option span {
+  display: block;
+
+  color: #74817d;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+
+/* ========================================
+   LOCATION
+======================================== */
+
+.order-card textarea {
+  width: 100%;
+
+  margin-top: 22px;
+  padding: 14px 15px;
+
+  resize: vertical;
+
+  border: 1px solid #d8e0dc;
+  border-radius: 10px;
+
+  outline: none;
+
+  background: #fff;
+
+  color: #182620;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  box-sizing: border-box;
+}
+
+.order-card textarea:focus {
+  border-color: #176b55;
+
+  box-shadow:
+    0 0 0 3px rgba(23, 107, 85, 0.08);
+}
+
+.order-card textarea::placeholder {
+  color: #9aa5a0;
+}
+
+.order-card > small {
+  display: block;
+
+  margin-top: 8px;
+
+  color: #89958f;
+
+  font-size: 11px;
+}
+
+
+/* ========================================
+   SUMMARY
+======================================== */
+
+.order-summary {
+  width: 100%;
+}
+
+.summary-card {
+  width: 100%;
+
+  padding: 28px;
+
+  border: 1px solid #176b55;
+  border-radius: 18px;
+
+  background: #f1f8f4;
+
+  box-shadow:
+    0 10px 30px rgba(23, 107, 85, 0.08);
+
+  box-sizing: border-box;
+}
+
+.summary-label {
+  color: #176b55;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  letter-spacing: 1.4px;
+}
+
+.summary-card h2 {
+  margin: 10px 0 25px;
+
+  color: #182620;
+
+  font-size: 24px;
+  line-height: 1.25;
+}
+
+
+/* ========================================
+   SUMMARY ROW
+======================================== */
+
+.summary-row {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding: 13px 0;
+
+  border-bottom: 1px solid #d9e7e0;
+}
+
+.summary-row span {
+  color: #71807a;
+
+  font-size: 13px;
+}
+
+.summary-row strong {
+  color: #1c2b25;
+
+  font-size: 13px;
+
+  text-align: right;
+}
+
+
+/* ========================================
+   DIVIDER
+======================================== */
+
+.summary-divider {
+  height: 1px;
+
+  margin: 22px 0;
+
+  background: #d5e3dc;
+}
+
+
+/* ========================================
+   TOTAL
+======================================== */
+
+.summary-total {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+}
+
+.summary-total span {
+  color: #53645d;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.summary-total strong {
+  color: #176b55;
+
+  font-size: 29px;
+  font-weight: 800;
+}
+
+
+/* ========================================
+   CONFIRM BUTTON
+======================================== */
+
+.confirm-order-button {
+  width: 100%;
+  height: 48px;
+
+  margin-top: 25px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  border: none;
+  border-radius: 9px;
+
+  background: #176b55;
+
+  color: white;
+
+  font-family: inherit;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: background 0.2s ease;
+}
+
+.confirm-order-button:hover {
+  background: #125642;
+}
+
+.confirm-order-button span {
+  font-size: 18px;
+}
+
+
+/* ========================================
+   PAYMENT NOTE
+======================================== */
+
+.payment-note {
+  margin: 15px 0 0;
+
+  color: #74827c;
+
+  font-size: 11px;
+
+  line-height: 1.5;
+
+  text-align: center;
+}
+
+
+/* ========================================
+   LOADING
+======================================== */
+
+.student-order-loading {
+  min-height: 70vh;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  color: #64736d;
+
+  font-size: 16px;
+}
+
+
+/* ========================================
+   ERROR
+======================================== */
+
+.student-order-error {
+  width: min(600px, 90%);
+
+  margin: 150px auto;
+
+  padding: 40px;
+
+  border: 1px solid #e2e7e4;
+  border-radius: 18px;
+
+  background: white;
+
+  text-align: center;
+}
+
+.student-order-error h2 {
+  margin: 0 0 10px;
+
+  color: #182620;
+}
+
+.student-order-error p {
+  color: #687772;
+
+  font-size: 14px;
+}
+
+.student-order-error button {
+  margin-top: 15px;
+
+  padding: 11px 20px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #176b55;
+
+  color: white;
+
+  font-family: inherit;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.student-order-error button:hover {
+  background: #125642;
+}
+
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 650px) {
+
+  .student-order-container {
+    width: 90%;
+    padding-top: 25px;
+  }
+
+  .order-header h1 {
+    font-size: 40px;
+
+    letter-spacing: -1.5px;
+  }
+
+  .order-card {
+    padding: 22px;
+  }
+
+  .mode-options {
+    grid-template-columns: 1fr;
+  }
+
+  .selected-plan {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .selected-plan .plan-price {
+    font-size: 23px;
+  }
+
+}
+
+
+@media (max-width: 500px) {
+
+  .order-header h1 {
+    font-size: 34px;
+  }
+
+  .order-mess-info {
+    align-items: flex-start;
+  }
+
+  .order-mess-info img {
+    width: 85px;
+    height: 75px;
+  }
+
+  .summary-card {
+    padding: 22px;
+  }
+
+}

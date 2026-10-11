@@ -1,0 +1,328 @@
+.make-payment-page {
+  min-height: 100vh;
+  background: #f6f7f9;
+}
+
+.make-payment-container {
+  width: min(700px, 100%);
+  margin: 0 auto;
+  padding: 35px 24px 60px;
+}
+
+.make-payment-back {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin-bottom: 25px;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.make-payment-card {
+  background: #ffffff;
+
+  border-radius: 16px;
+
+  padding: 30px;
+
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.make-payment-header {
+  text-align: center;
+
+  margin-bottom: 30px;
+}
+
+.make-payment-header span {
+  font-size: 12px;
+
+  font-weight: 700;
+
+  letter-spacing: 1px;
+}
+
+.make-payment-header h1 {
+  margin: 8px 0;
+
+  font-size: 30px;
+}
+
+.make-payment-header p {
+  margin: 0;
+
+  color: #666;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================
+   PAYMENT METHOD
+========================================= */
+
+.payment-method-section {
+  margin-top: 25px;
+}
+
+.payment-method-section h2 {
+  margin-bottom: 15px;
+
+  font-size: 19px;
+}
+
+.payment-method-option {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 14px;
+
+  padding: 18px;
+
+  margin-bottom: 12px;
+
+  border: 1px solid #dddddd;
+
+  border-radius: 12px;
+
+  cursor: pointer;
+
+  transition: border-color 0.2s ease,
+              background 0.2s ease;
+}
+
+.payment-method-option:hover {
+  border-color: #999999;
+
+  background: #fafafa;
+}
+
+.payment-method-option input {
+  margin-top: 4px;
+
+  cursor: pointer;
+}
+
+.payment-method-option strong {
+  display: block;
+
+  margin-bottom: 5px;
+
+  font-size: 15px;
+}
+
+.payment-method-option p {
+  margin: 0;
+
+  color: #777;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================
+   PAYMENT SUMMARY
+========================================= */
+
+.payment-summary {
+  margin-top: 25px;
+
+  padding: 18px;
+
+  border-radius: 12px;
+
+  background: #f6f7f9;
+}
+
+.payment-summary div {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 20px;
+
+  padding: 10px 0;
+}
+
+.payment-summary div + div {
+  border-top: 1px solid #e5e5e5;
+}
+
+.payment-summary span {
+  color: #777;
+
+  font-size: 14px;
+}
+
+.payment-summary strong {
+  color: #222;
+
+  font-size: 14px;
+
+  text-align: right;
+
+  word-break: break-all;
+}
+
+
+/* =========================================
+   ERROR
+========================================= */
+
+.make-payment-error {
+  margin-top: 20px;
+
+  padding: 13px 15px;
+
+  border-radius: 8px;
+
+  background: #fff0f0;
+
+  color: #b42318;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================
+   PAYMENT BUTTON
+========================================= */
+
+.make-payment-action {
+  margin-top: 25px;
+}
+
+.pay-now-button {
+  width: 100%;
+
+  padding: 15px 20px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #111827;
+
+  color: #ffffff;
+
+  font-size: 16px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: opacity 0.2s ease;
+}
+
+.pay-now-button:hover {
+  opacity: 0.9;
+}
+
+.pay-now-button:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================
+   NOTE
+========================================= */
+
+.payment-note {
+  margin: 18px 0 0;
+
+  text-align: center;
+
+  color: #777;
+
+  font-size: 13px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================
+   SUCCESS
+========================================= */
+
+.payment-success {
+  padding: 30px;
+
+  border-radius: 12px;
+
+  background: #effaf3;
+
+  text-align: center;
+}
+
+.payment-success h2 {
+  margin: 0 0 10px;
+
+  color: #18794e;
+
+  font-size: 23px;
+}
+
+.payment-success p {
+  margin: 5px 0;
+
+  color: #555;
+
+  line-height: 1.5;
+}
+
+.redirect-message {
+  font-size: 13px;
+
+  color: #777 !important;
+
+  margin-top: 15px !important;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 650px) {
+
+  .make-payment-container {
+    padding: 25px 16px 40px;
+  }
+
+  .make-payment-card {
+    padding: 20px;
+  }
+
+  .make-payment-header h1 {
+    font-size: 26px;
+  }
+
+  .payment-method-option {
+    padding: 15px;
+  }
+
+  .payment-summary div {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 5px;
+  }
+
+  .payment-summary strong {
+    text-align: left;
+  }
+}

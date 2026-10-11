@@ -5,8 +5,7 @@ import "./StudentDashboard.css";
 function StudentDashboard() {
   const navigate = useNavigate();
 
-  const userName =
-    sessionStorage.getItem("tiffny_user_name") || "Student";
+  const userName = sessionStorage.getItem("tiffny_user_name") || "Student";
 
   return (
     <>
@@ -14,12 +13,9 @@ function StudentDashboard() {
 
       <main className="student-dashboard">
         <div className="student-dashboard-container">
-
           {/* Welcome Banner */}
           <section className="student-hero">
-
             <div className="hero-content">
-
               <div className="dashboard-badge">
                 <span className="badge-dot"></span>
                 Student Dashboard
@@ -30,8 +26,8 @@ function StudentDashboard() {
               </h1>
 
               <p>
-                Find your mess, manage your meals, and keep track
-                of all your orders in one place.
+                Find your mess, manage your meals, and keep track of all your
+                orders in one place.
               </p>
 
               <button
@@ -41,21 +37,17 @@ function StudentDashboard() {
                 Browse Messes
                 <span className="button-arrow">→</span>
               </button>
-
             </div>
 
             <div className="hero-visual">
-
               <div className="food-circle">
                 <div className="food-plate">
-
                   <div className="food-rice"></div>
 
                   <div className="food-item food-item-one"></div>
                   <div className="food-item food-item-two"></div>
                   <div className="food-item food-item-three"></div>
                   <div className="food-item food-item-four"></div>
-
                 </div>
               </div>
 
@@ -63,22 +55,16 @@ function StudentDashboard() {
                 <strong>Healthy Meals</strong>
                 <span>Better everyday choices</span>
               </div>
-
             </div>
-
           </section>
-
 
           {/* Statistics */}
           <section className="student-stats">
-
             <div
               className="student-stat-card plan-card"
               onClick={() => navigate("/messes")}
             >
-              <div className="stat-icon plan-icon">
-                P
-              </div>
+              <div className="stat-icon plan-icon">P</div>
 
               <div className="stat-content">
                 <span>Active Plan</span>
@@ -89,14 +75,11 @@ function StudentDashboard() {
               <span className="stat-arrow">→</span>
             </div>
 
-
             <div
               className="student-stat-card order-card"
               onClick={() => navigate("/student/orders")}
             >
-              <div className="stat-icon order-icon">
-                O
-              </div>
+              <div className="stat-icon order-icon">O</div>
 
               <div className="stat-content">
                 <span>Total Orders</span>
@@ -107,14 +90,11 @@ function StudentDashboard() {
               <span className="stat-arrow">→</span>
             </div>
 
-
             <div
               className="student-stat-card review-card"
               onClick={() => navigate("/student/reviews")}
             >
-              <div className="stat-icon review-icon">
-                R
-              </div>
+              <div className="stat-icon review-icon">R</div>
 
               <div className="stat-content">
                 <span>Reviews</span>
@@ -124,29 +104,20 @@ function StudentDashboard() {
 
               <span className="stat-arrow">→</span>
             </div>
-
           </section>
-
 
           {/* Dashboard Grid */}
           <section className="student-dashboard-grid">
-
             {/* Recent Orders */}
             <div className="dashboard-card recent-orders-card">
-
               <div className="card-heading">
-
                 <div className="heading-left">
-                  <div className="heading-icon">
-                    O
-                  </div>
+                  <div className="heading-icon">O</div>
 
                   <div>
                     <h2>Recent Orders</h2>
 
-                    <p>
-                      Your latest meal orders will appear here.
-                    </p>
+                    <p>Your latest meal orders will appear here.</p>
                   </div>
                 </div>
 
@@ -157,27 +128,20 @@ function StudentDashboard() {
                   View All
                   <span>→</span>
                 </button>
-
               </div>
 
-
               <div className="empty-orders">
-
                 <div className="empty-order-illustration">
-
                   <div className="cloche-handle"></div>
 
                   <div className="cloche-dome"></div>
 
                   <div className="cloche-base"></div>
-
                 </div>
 
                 <h3>No orders yet</h3>
 
-                <p>
-                  You haven't placed any meal orders yet.
-                </p>
+                <p>You haven't placed any meal orders yet.</p>
 
                 <button
                   className="find-mess-button"
@@ -186,43 +150,29 @@ function StudentDashboard() {
                   Find a Mess
                   <span>→</span>
                 </button>
-
               </div>
-
             </div>
-
 
             {/* Quick Actions */}
             <div className="dashboard-card quick-actions-card">
-
               <div className="card-heading">
-
                 <div className="heading-left">
-                  <div className="heading-icon">
-                    Q
-                  </div>
+                  <div className="heading-icon">Q</div>
 
                   <div>
                     <h2>Quick Actions</h2>
 
-                    <p>
-                      Manage your Tiffny account.
-                    </p>
+                    <p>Manage your Tiffny account.</p>
                   </div>
                 </div>
-
               </div>
 
-
               <div className="quick-actions">
-
                 <button
                   className="action-item action-green"
                   onClick={() => navigate("/messes")}
                 >
-                  <div className="action-icon">
-                    M
-                  </div>
+                  <div className="action-icon">M</div>
 
                   <div className="action-text">
                     <strong>Find a Mess</strong>
@@ -232,14 +182,11 @@ function StudentDashboard() {
                   <span className="action-arrow">→</span>
                 </button>
 
-
                 <button
                   className="action-item action-orange"
                   onClick={() => navigate("/student/orders")}
                 >
-                  <div className="action-icon">
-                    O
-                  </div>
+                  <div className="action-icon">O</div>
 
                   <div className="action-text">
                     <strong>My Orders</strong>
@@ -249,31 +196,30 @@ function StudentDashboard() {
                   <span className="action-arrow">→</span>
                 </button>
 
-
                 <button
                   className="action-item action-purple"
                   onClick={() => navigate("/student/profile")}
                 >
-                  <div className="action-icon">
-                    P
-                  </div>
+                  <div className="action-icon">P</div>
 
                   <div className="action-text">
-                    <strong>My Profile</strong>
+                    <button
+                      type="button"
+                      onClick={() => navigate("/student/profile")}
+                    >
+                      My Profile
+                    </button>
                     <span>Manage your information</span>
                   </div>
 
                   <span className="action-arrow">→</span>
                 </button>
 
-
                 <button
                   className="action-item action-red"
                   onClick={() => navigate("/student/reviews")}
                 >
-                  <div className="action-icon">
-                    R
-                  </div>
+                  <div className="action-icon">R</div>
 
                   <div className="action-text">
                     <strong>My Reviews</strong>
@@ -282,38 +228,27 @@ function StudentDashboard() {
 
                   <span className="action-arrow">→</span>
                 </button>
-
               </div>
-
             </div>
-
           </section>
-
 
           {/* Bottom Information */}
           <section className="dashboard-bottom">
-
             <div className="bottom-content">
               <div className="bottom-line"></div>
 
               <div>
                 <h3>Good Food. Better Days.</h3>
 
-                <p>
-                  Find reliable meals from messes around you.
-                </p>
+                <p>Find reliable meals from messes around you.</p>
               </div>
             </div>
 
-            <button
-              onClick={() => navigate("/messes")}
-            >
+            <button onClick={() => navigate("/messes")}>
               Explore Messes
               <span>→</span>
             </button>
-
           </section>
-
         </div>
       </main>
     </>

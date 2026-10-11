@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import "./OrdersManagement.css";
 
@@ -6,10 +7,8 @@ const API_BASE_URL = "http://127.0.0.1:8000";
 function OrdersManagement() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
   const [updatingOrderId, setUpdatingOrderId] = useState(null);
 
   useEffect(() => {
@@ -17,7 +16,7 @@ function OrdersManagement() {
   }, []);
 
   async function fetchOrders() {
-    const token = localStorage.getItem("tiffny_token");
+    const token = sessionStorage.getItem("tiffny_token");
 
     if (!token) {
       setError("Login token not found. Please login again.");
@@ -44,7 +43,7 @@ function OrdersManagement() {
         );
       }
 
-      setOrders(data);
+      setOrders(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Orders loading error:", error);
       setError(error.message);
@@ -54,7 +53,7 @@ function OrdersManagement() {
   }
 
   async function updateOrderStatus(orderId, newStatus) {
-    const token = localStorage.getItem("tiffny_token");
+    const token = sessionStorage.getItem("tiffny_token");
 
     if (!token) {
       setError("Login token not found. Please login again.");
@@ -103,11 +102,7 @@ function OrdersManagement() {
         `Order status updated to ${formatStatus(newStatus)}.`
       );
     } catch (error) {
-      console.error(
-        "Order status update error:",
-        error
-      );
-
+      console.error("Order status update error:", error);
       setError(error.message);
     } finally {
       setUpdatingOrderId(null);
@@ -119,16 +114,20 @@ function OrdersManagement() {
       return "Unknown";
     }
 
-    if (status === "PENDING_PAYMENT") {
-      return "Pending";
+    if (status === "PENDING_OWNER_APPROVAL") {
+      return "Waiting for Approval";
     }
 
-    if (status === "ACCEPTED") {
-      return "Accepted";
+    if (status === "PENDING_PAYMENT") {
+      return "Waiting for Payment";
+    }
+
+    if (status === "ACTIVE") {
+      return "Payment Successful";
     }
 
     if (status === "COMPLETED") {
-      return "Completed";
+      return "Order Completed";
     }
 
     if (status === "CANCELLED") {
@@ -139,11 +138,14 @@ function OrdersManagement() {
   }
 
   function getStatusClass(status) {
-    if (status === "PENDING_PAYMENT") {
+    if (status === "PENDING_OWNER_APPROVAL") {
       return "status-pending";
     }
 
-    if (status === "ACCEPTED") {
+    if (
+      status === "PENDING_PAYMENT" ||
+      status === "ACTIVE"
+    ) {
       return "status-accepted";
     }
 
@@ -159,8 +161,11 @@ function OrdersManagement() {
   }
 
   function formatOrderType(planType) {
-    if (planType === "ONE_DAY") {
-      return "One-Time";
+    if (
+      planType === "ONE_DAY" ||
+      planType === "ONE_TIME"
+    ) {
+      return "One-Day";
     }
 
     if (planType === "MONTHLY") {
@@ -182,12 +187,56 @@ function OrdersManagement() {
     return mealMode || "Unknown";
   }
 
-  function formatDate(dateValue) {
+  // NEW: Format the meal slot for the mess owner.
+  function formatMealSlot(mealSlot) {
+    if (!mealSlot || !mealSlot.trim()) {
+      return "Not specified";
+    }
+
+    const slot = mealSlot.trim().toUpperCase();
+
+    if (slot === "LUNCH") {
+      return "Lunch";
+    }
+
+    if (slot === "DINNER") {
+      return "Dinner";
+    }
+
+    return mealSlot;
+  }
+
+  // Format backend date/time.
+  // Datetimes without a timezone are treated as UTC.
+
+  function prepareDateValue(dateValue) {
     if (!dateValue) {
+      return null;
+    }
+
+    if (typeof dateValue !== "string") {
+      return dateValue;
+    }
+
+    if (
+      !dateValue.endsWith("Z") &&
+      !dateValue.includes("+") &&
+      !/[+-]\d{2}:\d{2}$/.test(dateValue)
+    ) {
+      return `${dateValue}Z`;
+    }
+
+    return dateValue;
+  }
+
+  function formatDate(dateValue) {
+    const preparedDate = prepareDateValue(dateValue);
+
+    if (!preparedDate) {
       return "Not available";
     }
 
-    const date = new Date(dateValue);
+    const date = new Date(preparedDate);
 
     if (Number.isNaN(date.getTime())) {
       return "Not available";
@@ -199,7 +248,39 @@ function OrdersManagement() {
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
+      hour12: true,
     });
+  }
+
+  function formatDateOnly(dateValue) {
+    const preparedDate = prepareDateValue(dateValue);
+
+    if (!preparedDate) {
+      return "Not available";
+    }
+
+    const date = new Date(preparedDate);
+
+    if (Number.isNaN(date.getTime())) {
+      return "Not available";
+    }
+
+    return date.toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  }
+
+  function isMonthlyOrder(order) {
+    return order.plan_type === "MONTHLY";
+  }
+
+  function isOneDayOrder(order) {
+    return (
+      order.plan_type === "ONE_DAY" ||
+      order.plan_type === "ONE_TIME"
+    );
   }
 
   if (loading) {
@@ -215,6 +296,8 @@ function OrdersManagement() {
   return (
     <div className="orders-page">
       <div className="orders-container">
+
+        {/* HEADER */}
 
         <div className="orders-header">
           <div>
@@ -235,17 +318,23 @@ function OrdersManagement() {
           </div>
         </div>
 
+        {/* ERROR */}
+
         {error && (
           <div className="orders-message orders-error">
             {error}
           </div>
         )}
 
+        {/* SUCCESS */}
+
         {success && (
           <div className="orders-message orders-success">
             {success}
           </div>
         )}
+
+        {/* NO ORDERS / ORDERS LIST */}
 
         {orders.length === 0 ? (
           <div className="empty-orders">
@@ -258,22 +347,22 @@ function OrdersManagement() {
           </div>
         ) : (
           <div className="orders-list">
-
             {orders.map((order) => {
-
               const isUpdating =
                 updatingOrderId === order.order_id;
 
               const status = order.status;
+              const monthly = isMonthlyOrder(order);
+              const oneDay = isOneDayOrder(order);
 
               return (
                 <div
                   className="order-card"
                   key={order.order_id}
                 >
+                  {/* ORDER HEADER */}
 
                   <div className="order-card-header">
-
                     <div>
                       <p className="order-small-label">
                         ORDER
@@ -296,33 +385,38 @@ function OrdersManagement() {
                     >
                       {formatStatus(status)}
                     </span>
-
                   </div>
 
-                  <div className="order-details">
+                  {/* ORDER DETAILS */}
 
+                  <div className="order-details">
                     <div className="order-detail">
                       <span>Meal</span>
                       <strong>
-                        {order.meal_name}
+                        {order.meal_name || "Not specified"}
                       </strong>
                     </div>
 
                     <div className="order-detail">
                       <span>Order Type</span>
                       <strong>
-                        {formatOrderType(
-                          order.plan_type
-                        )}
+                        {formatOrderType(order.plan_type)}
                       </strong>
                     </div>
 
                     <div className="order-detail">
                       <span>Mode</span>
                       <strong>
-                        {formatMealMode(
-                          order.meal_mode
-                        )}
+                        {formatMealMode(order.meal_mode)}
+                      </strong>
+                    </div>
+
+                    {/* NEW: LUNCH / DINNER */}
+
+                    <div className="order-detail">
+                      <span>Meal Slot</span>
+                      <strong>
+                        {formatMealSlot(order.meal_slot)}
                       </strong>
                     </div>
 
@@ -339,25 +433,65 @@ function OrdersManagement() {
                     <div className="order-detail">
                       <span>Order Date</span>
                       <strong>
-                        {formatDate(
-                          order.created_at
-                        )}
+                        {formatDate(order.created_at)}
                       </strong>
                     </div>
 
                     <div className="order-detail order-location">
                       <span>Location</span>
                       <strong>
-                        {order.location ||
-                          "Mess location"}
+                        {order.location || "Mess location"}
                       </strong>
                     </div>
-
                   </div>
+
+                  {/* MONTHLY PLAN DETAILS */}
+
+                  {monthly && status === "ACTIVE" && (
+                    <div className="monthly-order-details">
+                      <div className="monthly-detail">
+                        <span>Joined From</span>
+                        <strong>
+                          {formatDateOnly(order.start_date)}
+                        </strong>
+                      </div>
+
+                      <div className="monthly-detail">
+                        <span>Ending Date</span>
+                        <strong>
+                          {formatDateOnly(order.end_date)}
+                        </strong>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* PAYMENT INFORMATION */}
+
+                  {status === "ACTIVE" && (
+                    <div className="payment-status-message">
+                      <strong>Payment Successful</strong>
+
+                      {monthly ? (
+                        <p>
+                          Student has joined the monthly
+                          mess plan.
+                        </p>
+                      ) : (
+                        <p>
+                          Student payment has been
+                          successfully completed.
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* ACTIONS */}
 
                   <div className="order-actions">
 
-                    {status === "PENDING_PAYMENT" && (
+                    {/* WAITING FOR OWNER APPROVAL */}
+
+                    {status === "PENDING_OWNER_APPROVAL" && (
                       <>
                         <button
                           type="button"
@@ -366,7 +500,7 @@ function OrdersManagement() {
                           onClick={() =>
                             updateOrderStatus(
                               order.order_id,
-                              "ACCEPTED"
+                              "PENDING_PAYMENT"
                             )
                           }
                         >
@@ -391,8 +525,38 @@ function OrdersManagement() {
                       </>
                     )}
 
-                    {status === "ACCEPTED" && (
+                    {/* WAITING FOR STUDENT PAYMENT */}
+
+                    {status === "PENDING_PAYMENT" && (
                       <>
+                        <span className="final-status">
+                          Waiting for Student Payment
+                        </span>
+
+                        <button
+                          type="button"
+                          className="cancel-button"
+                          disabled={isUpdating}
+                          onClick={() =>
+                            updateOrderStatus(
+                              order.order_id,
+                              "CANCELLED"
+                            )
+                          }
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    )}
+
+                    {/* ACTIVE ONE-DAY ORDER */}
+
+                    {status === "ACTIVE" && oneDay && (
+                      <>
+                        <span className="final-status">
+                          Payment Successful
+                        </span>
+
                         <button
                           type="button"
                           className="complete-button"
@@ -425,27 +589,51 @@ function OrdersManagement() {
                       </>
                     )}
 
+                    {/* ACTIVE MONTHLY ORDER */}
+
+                    {status === "ACTIVE" && monthly && (
+                      <>
+                        <span className="final-status">
+                          Monthly Plan Active
+                        </span>
+
+                        <button
+                          type="button"
+                          className="cancel-button"
+                          disabled={isUpdating}
+                          onClick={() =>
+                            updateOrderStatus(
+                              order.order_id,
+                              "CANCELLED"
+                            )
+                          }
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    )}
+
+                    {/* COMPLETED */}
+
                     {status === "COMPLETED" && (
                       <span className="final-status">
                         Order Completed
                       </span>
                     )}
 
+                    {/* CANCELLED */}
+
                     {status === "CANCELLED" && (
                       <span className="final-status cancelled-text">
                         Order Cancelled
                       </span>
                     )}
-
                   </div>
-
                 </div>
               );
             })}
-
           </div>
         )}
-
       </div>
     </div>
   );

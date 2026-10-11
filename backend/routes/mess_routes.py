@@ -374,7 +374,7 @@ def get_public_mess_details(
         )
 
     # -----------------------------------------------------
-    # GET MENU
+    # GET WEEKLY MENU
     # -----------------------------------------------------
 
     menu_collection = db["menus"]
@@ -390,25 +390,22 @@ def get_public_mess_details(
     for item in menu_items:
 
         menu_result.append({
-            "meal_id": str(item["_id"]),
+            "menu_id": str(item["_id"]),
             "mess_id": item.get(
                 "mess_id"
             ),
-            "meal_name": item.get(
-                "meal_name"
+            "day": item.get(
+                "day"
             ),
-            "description": item.get(
-                "description"
+            "lunch": item.get(
+                "lunch"
             ),
-            "meal_type": item.get(
-                "meal_type"
+            "dinner": item.get(
+                "dinner"
             ),
-            "price": item.get(
-                "price"
-            ),
-            "available": item.get(
-                "available",
-                True
+            "holiday": item.get(
+                "holiday",
+                False
             )
         })
 
@@ -712,7 +709,7 @@ def update_one_time_price(
 
 
 # =========================================================
-# ADD MEAL TO MENU
+# ADD DAILY MENU
 # =========================================================
 
 @router.post("/menu")
@@ -729,39 +726,85 @@ def add_menu_item(
     })
 
     if mess is None:
-        return {
-            "message": "Mess profile not found"
-        }
+        raise HTTPException(
+            status_code=404,
+            detail="Mess profile not found"
+        )
+
+    menu_collection = db["menus"]
+
+    # Normalize day
+    day = menu.day.strip().upper()
+
+    allowed_days = {
+        "MONDAY",
+        "TUESDAY",
+        "WEDNESDAY",
+        "THURSDAY",
+        "FRIDAY",
+        "SATURDAY",
+        "SUNDAY"
+    }
+
+    if day not in allowed_days:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Invalid day. "
+                "Use Monday to Sunday."
+            )
+        )
+
+    # Check if this day already exists
+    existing_menu = menu_collection.find_one({
+        "mess_id": str(mess["_id"]),
+        "day": day
+    })
+
+    if existing_menu:
+        raise HTTPException(
+            status_code=400,
+            detail=f"{day} menu already exists."
+        )
 
     # Create menu document
     menu_document = create_menu_document(
         mess_id=str(mess["_id"]),
-        meal_name=menu.meal_name,
-        description=menu.description,
-        meal_type=menu.meal_type,
-        price=menu.price,
-        available=menu.available
+        day=day,
+        lunch=(
+            menu.lunch.model_dump()
+            if menu.lunch
+            else None
+        ),
+        dinner=(
+            menu.dinner.model_dump()
+            if menu.dinner
+            else None
+        ),
+        holiday=menu.holiday
     )
 
-    # Get menu collection
-    menu_collection = db["menus"]
-
-    # Insert menu item
+    # Insert menu
     result = menu_collection.insert_one(
         menu_document
     )
 
     return {
         "message": (
-            "Meal added to menu successfully"
+            "Daily menu added successfully"
         ),
-        "meal_id": str(result.inserted_id),
-        "mess_id": str(mess["_id"])
+        "menu_id": str(result.inserted_id),
+        "mess_id": str(mess["_id"]),
+        "day": day
     }
 
 
 # =========================================================
-# VIEW OWN MESS MENU
+# VIEW OWN WEEKLY MENU
+# =========================================================
+
+# =========================================================
+# VIEW OWN WEEKLY MENU
 # =========================================================
 
 @router.get(
@@ -782,14 +825,34 @@ def get_menu(
     if mess is None:
         return []
 
-    # Get menu collection
     menu_collection = db["menus"]
 
-    # Find all menu items
+    # Find only new weekly menu records
     menu_items = list(
         menu_collection.find({
-            "mess_id": str(mess["_id"])
+            "mess_id": str(mess["_id"]),
+            "day": {
+                "$exists": True
+            }
         })
+    )
+
+    day_order = {
+        "MONDAY": 1,
+        "TUESDAY": 2,
+        "WEDNESDAY": 3,
+        "THURSDAY": 4,
+        "FRIDAY": 5,
+        "SATURDAY": 6,
+        "SUNDAY": 7
+    }
+
+    # Sort Monday -> Sunday
+    menu_items.sort(
+        key=lambda item: day_order.get(
+            item.get("day", ""),
+            99
+        )
     )
 
     result = []
@@ -797,25 +860,35 @@ def get_menu(
     for item in menu_items:
 
         result.append({
-            "meal_id": str(item["_id"]),
-            "mess_id": item["mess_id"],
-            "meal_name": item["meal_name"],
-            "description": item["description"],
-            "meal_type": item["meal_type"],
-            "price": item["price"],
-            "available": item["available"]
+            "menu_id": str(item["_id"]),
+            "mess_id": item.get(
+                "mess_id"
+            ),
+            "day": item.get(
+                "day"
+            ),
+            "lunch": item.get(
+                "lunch"
+            ),
+            "dinner": item.get(
+                "dinner"
+            ),
+            "holiday": item.get(
+                "holiday",
+                False
+            )
         })
 
     return result
 
 
 # =========================================================
-# UPDATE MENU ITEM
+# UPDATE DAILY MENU
 # =========================================================
 
-@router.put("/menu/{meal_id}")
+@router.put("/menu/{menu_id}")
 def update_menu_item(
-    meal_id: str,
+    menu_id: str,
     menu: MenuUpdateSchema,
     current_user=Depends(
         require_role("MESS_OWNER")
@@ -828,58 +901,104 @@ def update_menu_item(
     })
 
     if mess is None:
-        return {
-            "message": "Mess profile not found"
-        }
+        raise HTTPException(
+            status_code=404,
+            detail="Mess profile not found"
+        )
 
-    # Get menu collection
     menu_collection = db["menus"]
 
-    # Validate meal ID
+    # Validate menu ID
     try:
-        meal_object_id = ObjectId(meal_id)
+        menu_object_id = ObjectId(menu_id)
 
     except Exception:
         raise HTTPException(
             status_code=400,
-            detail="Invalid meal ID"
+            detail="Invalid menu ID"
         )
 
-    # Update only owner's meal
+    # Normalize day
+    day = menu.day.strip().upper()
+
+    allowed_days = {
+        "MONDAY",
+        "TUESDAY",
+        "WEDNESDAY",
+        "THURSDAY",
+        "FRIDAY",
+        "SATURDAY",
+        "SUNDAY"
+    }
+
+    if day not in allowed_days:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Invalid day. "
+                "Use Monday to Sunday."
+            )
+        )
+
+    # Check whether another menu already uses this day
+    existing_menu = menu_collection.find_one({
+        "mess_id": str(mess["_id"]),
+        "day": day,
+        "_id": {
+            "$ne": menu_object_id
+        }
+    })
+
+    if existing_menu:
+        raise HTTPException(
+            status_code=400,
+            detail=f"{day} menu already exists."
+        )
+
+    # Update only owner's menu
     result = menu_collection.update_one(
         {
-            "_id": meal_object_id,
+            "_id": menu_object_id,
             "mess_id": str(mess["_id"])
         },
         {
             "$set": {
-                "meal_name": menu.meal_name,
-                "description": menu.description,
-                "meal_type": menu.meal_type,
-                "price": menu.price,
-                "available": menu.available
+                "day": day,
+                "lunch": (
+                    menu.lunch.model_dump()
+                    if menu.lunch
+                    else None
+                ),
+                "dinner": (
+                    menu.dinner.model_dump()
+                    if menu.dinner
+                    else None
+                ),
+                "holiday": menu.holiday
             }
         }
     )
 
     if result.matched_count == 0:
-        return {
-            "message": "Meal not found"
-        }
+        raise HTTPException(
+            status_code=404,
+            detail="Menu not found"
+        )
 
     return {
-        "message": "Meal updated successfully",
-        "meal_id": meal_id
+        "message": "Daily menu updated successfully",
+        "menu_id": menu_id,
+        "day": day
     }
 
 
 # =========================================================
-# DELETE MENU ITEM
+# DELETE DAILY MENU
 # =========================================================
 
-@router.delete("/menu/{meal_id}")
+@router.delete("/menu/{menu_id}")
 def delete_menu_item(
-    meal_id: str,
+    menu_id: str,
     current_user=Depends(
         require_role("MESS_OWNER")
     )
@@ -891,37 +1010,38 @@ def delete_menu_item(
     })
 
     if mess is None:
-        return {
-            "message": "Mess profile not found"
-        }
+        raise HTTPException(
+            status_code=404,
+            detail="Mess profile not found"
+        )
 
-    # Get menu collection
     menu_collection = db["menus"]
 
-    # Validate meal ID
+    # Validate menu ID
     try:
-        meal_object_id = ObjectId(meal_id)
+        menu_object_id = ObjectId(menu_id)
 
     except Exception:
         raise HTTPException(
             status_code=400,
-            detail="Invalid meal ID"
+            detail="Invalid menu ID"
         )
 
-    # Delete only owner's meal
+    # Delete only owner's menu
     result = menu_collection.delete_one(
         {
-            "_id": meal_object_id,
+            "_id": menu_object_id,
             "mess_id": str(mess["_id"])
         }
     )
 
     if result.deleted_count == 0:
-        return {
-            "message": "Meal not found"
-        }
+        raise HTTPException(
+            status_code=404,
+            detail="Menu not found"
+        )
 
     return {
-        "message": "Meal deleted successfully",
-        "meal_id": meal_id
+        "message": "Daily menu deleted successfully",
+        "menu_id": menu_id
     }

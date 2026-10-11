@@ -1,9 +1,19 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
+import Navbar from "../../components/Navbar/Navbar";
 import "./MessDetails.css";
 
 const API_BASE_URL = "http://127.0.0.1:8000";
+
+const DAYS = [
+  "MONDAY",
+  "TUESDAY",
+  "WEDNESDAY",
+  "THURSDAY",
+  "FRIDAY",
+  "SATURDAY",
+  "SUNDAY",
+];
 
 function MessDetails() {
   const navigate = useNavigate();
@@ -35,7 +45,6 @@ function MessDetails() {
       }
 
       setMess(data);
-
     } catch (error) {
       console.error(
         "Mess details loading error:",
@@ -43,12 +52,10 @@ function MessDetails() {
       );
 
       setError(error.message);
-
     } finally {
       setLoading(false);
     }
   }
-
 
   function getPhotoUrl(photo) {
     if (!photo) {
@@ -62,7 +69,6 @@ function MessDetails() {
     return `${API_BASE_URL}${photo}`;
   }
 
-
   function formatPrice(price) {
     if (
       price === null ||
@@ -75,47 +81,139 @@ function MessDetails() {
     return `₹${Number(price).toLocaleString("en-IN")}`;
   }
 
-
   function handleOrder(planType) {
+    const token = sessionStorage.getItem("tiffny_token");
 
     /*
-      For now we send the student to Login.
-
-      Later we will check the student token
-      and directly open the booking page.
+      Save the selected order so the selection
+      is not lost if the student needs to login.
     */
 
-    localStorage.setItem(
+    const pendingOrder = {
+      messId: messId,
+      planType: planType,
+    };
+
+    sessionStorage.setItem(
       "tiffny_pending_order",
-      JSON.stringify({
-        messId: messId,
-        planType: planType
-      })
+      JSON.stringify(pendingOrder)
     );
+
+    /*
+      If student is already logged in,
+      directly open the order page.
+    */
+
+    if (token) {
+      navigate(
+        `/student/order?messId=${messId}&planType=${planType}`
+      );
+
+      return;
+    }
+
+    /*
+      If student is not logged in,
+      send them to Login.
+    */
 
     navigate("/login");
   }
 
+  function getSortedMenu() {
+    if (!mess?.menu || !Array.isArray(mess.menu)) {
+      return [];
+    }
 
-  if (loading) {
+    const menuMap = {};
+
+    mess.menu.forEach((item) => {
+      if (item?.day) {
+        menuMap[item.day.toUpperCase()] = item;
+      }
+    });
+
+    return DAYS.map((day) => {
+      return (
+        menuMap[day] || {
+          day: day,
+          lunch: null,
+          dinner: null,
+          holiday: false,
+        }
+      );
+    });
+  }
+
+  function renderMeal(meal, mealType) {
+    if (!meal) {
+      return (
+        <div className="weekly-meal-empty">
+          <span className="weekly-meal-label">
+            {mealType}
+          </span>
+
+          <p>
+            {mealType === "LUNCH"
+              ? "Lunch not added."
+              : "Dinner not added."}
+          </p>
+        </div>
+      );
+    }
+
     return (
-      <div className="mess-details-page">
+      <div className="weekly-meal-card">
+        <div className="weekly-meal-header">
+          <span className="weekly-meal-label">
+            {mealType}
+          </span>
 
-        <div className="mess-details-loading">
-          Loading mess details...
+          <strong className="weekly-meal-price">
+            {formatPrice(meal.price)}
+          </strong>
         </div>
 
+        <h4>
+          {meal.meal_name || "Meal"}
+        </h4>
+
+        <p className="weekly-meal-description">
+          {meal.description ||
+            "Freshly prepared meal."}
+        </p>
+
+        <div
+          className={
+            meal.available
+              ? "weekly-meal-status available"
+              : "weekly-meal-status unavailable"
+          }
+        >
+          <span className="status-dot"></span>
+
+          {meal.available
+            ? "Available"
+            : "Not available"}
+        </div>
       </div>
     );
   }
 
+  if (loading) {
+    return (
+      <div className="mess-details-page">
+        <div className="mess-details-loading">
+          Loading mess details...
+        </div>
+      </div>
+    );
+  }
 
   if (error) {
     return (
       <div className="mess-details-page">
-
         <div className="mess-details-error">
-
           <h2>
             Unable to load mess
           </h2>
@@ -129,95 +227,26 @@ function MessDetails() {
           >
             Back to Messes
           </button>
-
         </div>
-
       </div>
     );
   }
-
 
   if (!mess) {
     return null;
   }
 
-
   const photoUrl = getPhotoUrl(mess.photo);
-
+  const weeklyMenu = getSortedMenu();
 
   return (
     <div className="mess-details-page">
-
 
       {/* ========================================
           NAVBAR
       ======================================== */}
 
-      <header className="details-navbar">
-
-        <div
-          className="details-brand"
-          onClick={() => navigate("/")}
-        >
-
-          <div className="details-brand-mark">
-            T
-          </div>
-
-          <span>
-            tiffny
-          </span>
-
-        </div>
-
-
-        <nav className="details-nav-links">
-
-          <button
-            className="details-nav-link"
-            onClick={() => navigate("/messes")}
-          >
-            Messes
-          </button>
-
-          <button
-            className="details-nav-link"
-            onClick={() =>
-              navigate("/#how-it-works")
-            }
-          >
-            How It Works
-          </button>
-
-          <button
-            className="details-nav-link"
-            onClick={() =>
-              navigate("/#about")
-            }
-          >
-            About
-          </button>
-
-          <button
-            className="details-nav-link"
-            onClick={() =>
-              navigate("/#contact")
-            }
-          >
-            Contact
-          </button>
-
-        </nav>
-
-
-        <button
-          className="details-login-button"
-          onClick={() => navigate("/login")}
-        >
-          Login
-        </button>
-
-      </header>
+      <Navbar />
 
 
       {/* ========================================
@@ -329,6 +358,7 @@ function MessDetails() {
 
 
             {mess.address && (
+
               <div className="details-address">
 
                 <span>
@@ -340,6 +370,7 @@ function MessDetails() {
                 </strong>
 
               </div>
+
             )}
 
           </div>
@@ -406,9 +437,11 @@ function MessDetails() {
                 }
               >
                 Order One-Time Meal
+
                 <span>
                   →
                 </span>
+
               </button>
 
             </div>
@@ -417,11 +450,6 @@ function MessDetails() {
             {/* MONTHLY */}
 
             <div className="meal-plan-card featured">
-
-              <div className="plan-featured-label">
-                MONTHLY PLAN
-              </div>
-
 
               <div className="meal-plan-top">
 
@@ -451,9 +479,11 @@ function MessDetails() {
                 }
               >
                 Choose Monthly Plan
+
                 <span>
                   →
                 </span>
+
               </button>
 
             </div>
@@ -464,7 +494,7 @@ function MessDetails() {
 
 
         {/* ========================================
-            MENU
+            WEEKLY MENU
         ======================================== */}
 
         <section className="details-menu-section">
@@ -472,7 +502,7 @@ function MessDetails() {
           <div className="details-section-heading">
 
             <span>
-              MENU
+              WEEKLY MENU
             </span>
 
             <h2>
@@ -480,44 +510,87 @@ function MessDetails() {
             </h2>
 
             <p>
-              Explore the meals currently
-              available from this mess.
+              Explore the weekly lunch and dinner
+              menu prepared by this mess.
             </p>
 
           </div>
 
 
-          {mess.menu &&
-          mess.menu.length > 0 ? (
+          {weeklyMenu.length > 0 ? (
 
-            <div className="details-menu-grid">
+            <div className="weekly-menu-list">
 
-              {mess.menu.map((item) => (
+              {weeklyMenu.map((dayMenu) => (
 
                 <div
-                  className="details-menu-card"
-                  key={item._id}
+                  className="weekly-day-card"
+                  key={dayMenu.day}
                 >
 
-                  <div className="menu-card-number">
-                    +
+                  {/* DAY HEADER */}
+
+                  <div className="weekly-day-header">
+
+                    <div>
+                      <span>
+                        DAY
+                      </span>
+
+                      <h3>
+                        {dayMenu.day}
+                      </h3>
+                    </div>
+
+                    {dayMenu.holiday && (
+                      <div className="holiday-badge">
+                        HOLIDAY
+                      </div>
+                    )}
+
                   </div>
 
 
-                  <div>
+                  {/* HOLIDAY */}
 
-                    <h3>
-                      {item.meal_name ||
-                        item.name ||
-                        "Meal"}
-                    </h3>
+                  {dayMenu.holiday ? (
 
-                    <p>
-                      {item.description ||
-                        "Freshly prepared meal"}
-                    </p>
+                    <div className="holiday-content">
 
-                  </div>
+                      <div className="holiday-icon">
+                        —
+                      </div>
+
+                      <div>
+                        <h4>
+                          Mess Closed
+                        </h4>
+
+                        <p>
+                          This mess is closed on
+                          {` ${dayMenu.day.toLowerCase()}`}.
+                        </p>
+                      </div>
+
+                    </div>
+
+                  ) : (
+
+                    <div className="weekly-meals-grid">
+
+                      {renderMeal(
+                        dayMenu.lunch,
+                        "LUNCH"
+                      )}
+
+                      {renderMeal(
+                        dayMenu.dinner,
+                        "DINNER"
+                      )}
+
+                    </div>
+
+                  )}
 
                 </div>
 
@@ -535,7 +608,7 @@ function MessDetails() {
 
               <p>
                 The mess owner has not added
-                menu items yet.
+                the weekly menu yet.
               </p>
 
             </div>

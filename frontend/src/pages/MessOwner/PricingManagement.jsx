@@ -25,7 +25,7 @@ function PricingManagement() {
   }, []);
 
   async function fetchMessProfile() {
-    const token = localStorage.getItem("tiffny_token");
+    const token = sessionStorage.getItem("tiffny_token");
 
     if (!token) {
       setOneTimeError("Login token not found. Please login again.");
@@ -105,7 +105,7 @@ function PricingManagement() {
       return;
     }
 
-    const token = localStorage.getItem("tiffny_token");
+    const token = sessionStorage.getItem("tiffny_token");
 
     if (!token) {
       setOneTimeError(
@@ -177,7 +177,7 @@ function PricingManagement() {
       return;
     }
 
-    const token = localStorage.getItem("tiffny_token");
+    const token = sessionStorage.getItem("tiffny_token");
 
     if (!token) {
       setMonthlyError(

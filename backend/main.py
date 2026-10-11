@@ -14,6 +14,9 @@ from routes.order_routes import router as order_router
 from routes.payment_routes import router as payment_router
 from routes.review_routes import router as review_router
 
+from routes.notification_routes import router as notification_router
+from routes.student_profile_routes import router as student_profile_router
+
 
 app = FastAPI(title="Tiffny API")
 
@@ -99,10 +102,25 @@ app.include_router(payment_router)
 
 
 # =========================================================
+# NOTIFICATION ROUTES
+# =========================================================
+
+app.include_router(notification_router)
+
+
+
+# =========================================================
 # REVIEW ROUTES
 # =========================================================
 
 app.include_router(review_router)
+
+
+# =========================================================
+# STUDENT-PROFILE ROUTES
+# =========================================================
+
+app.include_router(student_profile_router)
 
 
 # =========================================================
@@ -127,3 +145,5 @@ def test_db():
     return {
         "message": "MongoDB connected successfully!"
     }
+
+

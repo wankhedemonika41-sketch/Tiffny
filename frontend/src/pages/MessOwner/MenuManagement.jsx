@@ -1,149 +1,62 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./MenuManagement.css";
 
 const API_BASE_URL = "http://127.0.0.1:8000";
 
-function findLoginToken() {
-  const possibleKeys = [
-    "access_token",
-    "token",
-    "accessToken",
-    "jwt",
-    "authToken",
-    "tiffny_token",
-    "tiffnyToken",
-  ];
+const DAYS = [
+  "MONDAY",
+  "TUESDAY",
+  "WEDNESDAY",
+  "THURSDAY",
+  "FRIDAY",
+  "SATURDAY",
+  "SUNDAY",
+];
 
-  // Check localStorage
-  for (const key of possibleKeys) {
-    const value = localStorage.getItem(key);
+const EMPTY_MEAL = {
+  meal_name: "",
+  description: "",
+  price: "",
+  available: true,
+};
 
-    if (value) {
-      return value;
-    }
-  }
-
-  // Check sessionStorage
-  for (const key of possibleKeys) {
-    const value = sessionStorage.getItem(key);
-
-    if (value) {
-      return value;
-    }
-  }
-
-  // Search localStorage for JWT
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    const value = localStorage.getItem(key);
-
-    if (
-      value &&
-      typeof value === "string" &&
-      value.startsWith("eyJ") &&
-      value.split(".").length === 3
-    ) {
-      return value;
-    }
-
-    if (value) {
-      try {
-        const parsed = JSON.parse(value);
-
-        if (
-          parsed &&
-          typeof parsed === "object"
-        ) {
-          const token =
-            parsed.access_token ||
-            parsed.accessToken ||
-            parsed.token ||
-            parsed.jwt ||
-            parsed.authToken;
-
-          if (
-            token &&
-            typeof token === "string"
-          ) {
-            return token;
-          }
-        }
-      } catch {
-        // Continue searching
-      }
-    }
-  }
-
-  // Search sessionStorage for JWT
-  for (let i = 0; i < sessionStorage.length; i++) {
-    const key = sessionStorage.key(i);
-    const value = sessionStorage.getItem(key);
-
-    if (
-      value &&
-      typeof value === "string" &&
-      value.startsWith("eyJ") &&
-      value.split(".").length === 3
-    ) {
-      return value;
-    }
-
-    if (value) {
-      try {
-        const parsed = JSON.parse(value);
-
-        if (
-          parsed &&
-          typeof parsed === "object"
-        ) {
-          const token =
-            parsed.access_token ||
-            parsed.accessToken ||
-            parsed.token ||
-            parsed.jwt ||
-            parsed.authToken;
-
-          if (
-            token &&
-            typeof token === "string"
-          ) {
-            return token;
-          }
-        }
-      } catch {
-        // Continue searching
-      }
-    }
-  }
-
-  return null;
-}
+const EMPTY_FORM = {
+  day: "MONDAY",
+  holiday: false,
+  lunch: { ...EMPTY_MEAL },
+  dinner: { ...EMPTY_MEAL },
+};
 
 function MenuManagement() {
   const [menuItems, setMenuItems] = useState([]);
+  const [formData, setFormData] = useState({
+    ...EMPTY_FORM,
+    lunch: { ...EMPTY_MEAL },
+    dinner: { ...EMPTY_MEAL },
+  });
+
+  const [editingMenuId, setEditingMenuId] = useState(null);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
 
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
-  const [editingMealId, setEditingMealId] = useState(null);
-
-  const [formData, setFormData] = useState({
-    meal_name: "",
-    description: "",
-    meal_type: "Lunch",
-    price: "",
-    available: true,
-  });
+  const dayOrder = useMemo(() => {
+    return DAYS.reduce((result, day, index) => {
+      result[day] = index + 1;
+      return result;
+    }, {});
+  }, []);
 
   useEffect(() => {
     loadMenu();
   }, []);
 
   // =========================================================
-  // LOAD MENU
+  // LOAD WEEKLY MENU
   // =========================================================
 
   async function loadMenu() {
@@ -151,11 +64,10 @@ function MenuManagement() {
       setLoading(true);
       setError("");
 
-      const token = findLoginToken();
+      const token = sessionStorage.getItem("tiffny_token");
 
       if (!token) {
-        setError("Please login first.");
-        setLoading(false);
+        setError("You are not logged in.");
         return;
       }
 
@@ -165,6 +77,7 @@ function MenuManagement() {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
+            Accept: "application/json",
           },
         }
       );
@@ -173,76 +86,180 @@ function MenuManagement() {
 
       if (!response.ok) {
         throw new Error(
-          data.detail ||
-            "Failed to load menu."
+          data.detail || "Unable to load weekly menu."
         );
       }
 
-      setMenuItems(
-        Array.isArray(data)
-          ? data
-          : []
-      );
-    } catch (error) {
-      console.error(
-        "Menu loading error:",
-        error
-      );
+      const sortedMenu = Array.isArray(data)
+        ? [...data].sort(
+            (a, b) =>
+              (dayOrder[a.day] || 99) -
+              (dayOrder[b.day] || 99)
+          )
+        : [];
 
-      setError(
-        error.message ||
-          "Unable to load menu."
-      );
+      setMenuItems(sortedMenu);
+    } catch (error) {
+      console.error("Load menu error:", error);
+      setError(error.message);
     } finally {
       setLoading(false);
     }
   }
 
   // =========================================================
-  // FORM CHANGE
-  // =========================================================
-
-  function handleChange(event) {
-    const {
-      name,
-      value,
-      type,
-      checked,
-    } = event.target;
-
-    setFormData(
-      (previousData) => ({
-        ...previousData,
-        [name]:
-          type === "checkbox"
-            ? checked
-            : value,
-      })
-    );
-
-    setError("");
-    setSuccessMessage("");
-  }
-
-  // =========================================================
-  // RESET FORM
+  // FORM RESET
   // =========================================================
 
   function resetForm() {
     setFormData({
-      meal_name: "",
-      description: "",
-      meal_type: "Lunch",
-      price: "",
-      available: true,
+      day: "MONDAY",
+      holiday: false,
+      lunch: { ...EMPTY_MEAL },
+      dinner: { ...EMPTY_MEAL },
     });
 
-    setEditingMealId(null);
-    setError("");
+    setEditingMenuId(null);
   }
 
   // =========================================================
-  // ADD / UPDATE MENU ITEM
+  // FORM HANDLERS
+  // =========================================================
+
+  function handleDayChange(event) {
+    const selectedDay = event.target.value;
+
+    setFormData((previous) => ({
+      ...previous,
+      day: selectedDay,
+    }));
+  }
+
+  function handleHolidayChange(event) {
+    const isHoliday = event.target.checked;
+
+    setFormData((previous) => ({
+      ...previous,
+      holiday: isHoliday,
+    }));
+  }
+
+  function handleMealChange(mealType, field, value) {
+    setFormData((previous) => ({
+      ...previous,
+      [mealType]: {
+        ...previous[mealType],
+        [field]: value,
+      },
+    }));
+  }
+
+  function handleAvailabilityChange(mealType) {
+    setFormData((previous) => ({
+      ...previous,
+      [mealType]: {
+        ...previous[mealType],
+        available: !previous[mealType].available,
+      },
+    }));
+  }
+
+  // =========================================================
+  // VALIDATE FORM
+  // =========================================================
+
+  function validateForm() {
+    if (!formData.day) {
+      setError("Please select a day.");
+      return false;
+    }
+
+    if (formData.holiday) {
+      return true;
+    }
+
+    const lunchEmpty =
+      !formData.lunch.meal_name.trim() &&
+      !formData.lunch.description.trim() &&
+      !formData.lunch.price;
+
+    const dinnerEmpty =
+      !formData.dinner.meal_name.trim() &&
+      !formData.dinner.description.trim() &&
+      !formData.dinner.price;
+
+    if (lunchEmpty && dinnerEmpty) {
+      setError(
+        "Please add at least Lunch or Dinner, or mark the day as a holiday."
+      );
+      return false;
+    }
+
+    if (!lunchEmpty) {
+      if (!formData.lunch.meal_name.trim()) {
+        setError("Please enter the lunch meal name.");
+        return false;
+      }
+
+      if (!formData.lunch.description.trim()) {
+        setError("Please enter the lunch description.");
+        return false;
+      }
+
+      if (
+        !formData.lunch.price ||
+        Number(formData.lunch.price) <= 0
+      ) {
+        setError("Please enter a valid lunch price.");
+        return false;
+      }
+    }
+
+    if (!dinnerEmpty) {
+      if (!formData.dinner.meal_name.trim()) {
+        setError("Please enter the dinner meal name.");
+        return false;
+      }
+
+      if (!formData.dinner.description.trim()) {
+        setError("Please enter the dinner description.");
+        return false;
+      }
+
+      if (
+        !formData.dinner.price ||
+        Number(formData.dinner.price) <= 0
+      ) {
+        setError("Please enter a valid dinner price.");
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  // =========================================================
+  // PREPARE MEAL DATA
+  // =========================================================
+
+  function prepareMeal(meal) {
+    if (
+      !meal ||
+      !meal.meal_name?.trim()
+    ) {
+      return null;
+    }
+
+    return {
+      meal_name: meal.meal_name.trim(),
+      description: meal.description.trim(),
+      price: Number(meal.price),
+      available: Boolean(meal.available),
+    };
+  }
+
+  // =========================================================
+  // ADD / UPDATE MENU
   // =========================================================
 
   async function handleSubmit(event) {
@@ -251,142 +268,114 @@ function MenuManagement() {
     setError("");
     setSuccessMessage("");
 
-    const mealName =
-      formData.meal_name.trim();
-
-    const description =
-      formData.description.trim();
-
-    const priceValue =
-      Number(formData.price);
-
-    // Basic frontend validation
-    if (!mealName) {
-      setError(
-        "Please enter the meal name."
-      );
+    if (!validateForm()) {
       return;
     }
 
-    if (!description) {
-      setError(
-        "Please enter the meal description."
-      );
+    const token = sessionStorage.getItem("tiffny_token");
+
+    if (!token) {
+      setError("You are not logged in.");
       return;
     }
 
-    if (
-      !formData.price ||
-      Number.isNaN(priceValue) ||
-      priceValue <= 0
-    ) {
-      setError(
-        "Please enter a valid price greater than 0."
-      );
-      return;
-    }
+    const requestBody = {
+      day: formData.day,
+      lunch: formData.holiday
+        ? null
+        : prepareMeal(formData.lunch),
+      dinner: formData.holiday
+        ? null
+        : prepareMeal(formData.dinner),
+      holiday: formData.holiday,
+    };
 
     try {
       setSaving(true);
 
-      const token = findLoginToken();
+      const url = editingMenuId
+        ? `${API_BASE_URL}/mess/menu/${editingMenuId}`
+        : `${API_BASE_URL}/mess/menu`;
 
-      if (!token) {
-        setError("Please login first.");
-        setSaving(false);
-        return;
-      }
+      const method = editingMenuId ? "PUT" : "POST";
 
-      const menuData = {
-        meal_name: mealName,
-        description: description,
-        meal_type: formData.meal_type,
-        price: priceValue,
-        available: formData.available,
-      };
-
-      let url = `${API_BASE_URL}/mess/menu`;
-      let method = "POST";
-
-      // If editing, use PUT
-      if (editingMealId) {
-        url = `${API_BASE_URL}/mess/menu/${editingMealId}`;
-        method = "PUT";
-      }
-
-      const response = await fetch(
-        url,
-        {
-          method,
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(menuData),
-        }
-      );
+      const response = await fetch(url, {
+        method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
 
       const data = await response.json();
 
       if (!response.ok) {
         throw new Error(
           data.detail ||
-            data.message ||
-            "Failed to save menu item."
+            `Unable to ${
+              editingMenuId ? "update" : "add"
+            } menu.`
         );
       }
 
-      if (editingMealId) {
-        setSuccessMessage(
-          "Menu item updated successfully."
-        );
-      } else {
-        setSuccessMessage(
-          "Menu item added successfully."
-        );
-      }
+      setSuccessMessage(
+        editingMenuId
+          ? "Weekly menu updated successfully."
+          : "Weekly menu added successfully."
+      );
 
       resetForm();
-
       await loadMenu();
     } catch (error) {
-      console.error(
-        "Menu save error:",
-        error
-      );
-
-      setError(
-        error.message ||
-          "Unable to save menu item."
-      );
+      console.error("Save menu error:", error);
+      setError(error.message);
     } finally {
       setSaving(false);
     }
   }
 
   // =========================================================
-  // EDIT MENU ITEM
+  // EDIT MENU
   // =========================================================
 
   function handleEdit(item) {
-    setEditingMealId(item.meal_id);
-
-    setFormData({
-      meal_name: item.meal_name || "",
-      description: item.description || "",
-      meal_type:
-        item.meal_type || "Lunch",
-      price:
-        item.price !== undefined &&
-        item.price !== null
-          ? String(item.price)
-          : "",
-      available:
-        item.available !== false,
-    });
-
     setError("");
     setSuccessMessage("");
+
+    setEditingMenuId(item.menu_id);
+
+    setFormData({
+      day: item.day || "MONDAY",
+      holiday: Boolean(item.holiday),
+
+      lunch: {
+        meal_name: item.lunch?.meal_name || "",
+        description: item.lunch?.description || "",
+        price:
+          item.lunch?.price !== undefined
+            ? item.lunch.price
+            : "",
+        available:
+          item.lunch?.available !== undefined
+            ? item.lunch.available
+            : true,
+      },
+
+      dinner: {
+        meal_name: item.dinner?.meal_name || "",
+        description: item.dinner?.description || "",
+        price:
+          item.dinner?.price !== undefined
+            ? item.dinner.price
+            : "",
+        available:
+          item.dinner?.available !== undefined
+            ? item.dinner.available
+            : true,
+      },
+    });
 
     window.scrollTo({
       top: 0,
@@ -395,35 +384,47 @@ function MenuManagement() {
   }
 
   // =========================================================
-  // DELETE MENU ITEM
+  // CANCEL EDIT
   // =========================================================
 
-  async function handleDelete(mealId) {
-    const shouldDelete = window.confirm(
-      "Are you sure you want to delete this menu item?"
+  function handleCancelEdit() {
+    resetForm();
+    setError("");
+    setSuccessMessage("");
+  }
+
+  // =========================================================
+  // DELETE MENU
+  // =========================================================
+
+  async function handleDelete(menuId) {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this day's menu?"
     );
 
-    if (!shouldDelete) {
+    if (!confirmed) {
+      return;
+    }
+
+    const token = sessionStorage.getItem("tiffny_token");
+
+    if (!token) {
+      setError("You are not logged in.");
       return;
     }
 
     try {
+      setDeletingId(menuId);
       setError("");
       setSuccessMessage("");
 
-      const token = findLoginToken();
-
-      if (!token) {
-        setError("Please login first.");
-        return;
-      }
-
       const response = await fetch(
-        `${API_BASE_URL}/mess/menu/${mealId}`,
+        `${API_BASE_URL}/mess/menu/${menuId}`,
         {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
+            Accept: "application/json",
           },
         }
       );
@@ -432,69 +433,150 @@ function MenuManagement() {
 
       if (!response.ok) {
         throw new Error(
-          data.detail ||
-            data.message ||
-            "Failed to delete menu item."
+          data.detail || "Unable to delete menu."
         );
       }
 
       setSuccessMessage(
-        "Menu item deleted successfully."
+        "Daily menu deleted successfully."
       );
+
+      if (editingMenuId === menuId) {
+        resetForm();
+      }
 
       await loadMenu();
     } catch (error) {
-      console.error(
-        "Menu delete error:",
-        error
-      );
-
-      setError(
-        error.message ||
-          "Unable to delete menu item."
-      );
+      console.error("Delete menu error:", error);
+      setError(error.message);
+    } finally {
+      setDeletingId(null);
     }
   }
 
   // =========================================================
-  // CANCEL EDIT
+  // FORMAT DAY
   // =========================================================
 
-  function handleCancelEdit() {
-    resetForm();
-    setSuccessMessage("");
+  function formatDay(day) {
+    if (!day) {
+      return "";
+    }
+
+    return (
+      day.charAt(0).toUpperCase() +
+      day.slice(1).toLowerCase()
+    );
   }
 
   // =========================================================
-  // LOADING STATE
+  // COUNT MEALS
+  // =========================================================
+
+  function getTotalMeals() {
+    return menuItems.reduce((total, item) => {
+      if (item.holiday) {
+        return total;
+      }
+
+      let count = total;
+
+      if (item.lunch) {
+        count += 1;
+      }
+
+      if (item.dinner) {
+        count += 1;
+      }
+
+      return count;
+    }, 0);
+  }
+
+  // =========================================================
+  // MEAL CARD
+  // =========================================================
+
+  function MealCard({ title, meal }) {
+    if (!meal) {
+      return (
+        <div className="weekly-meal-card weekly-meal-empty">
+          <div className="weekly-meal-heading">
+            <span>{title}</span>
+          </div>
+
+          <p>
+            No {title.toLowerCase()} menu added.
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="weekly-meal-card">
+        <div className="weekly-meal-heading">
+          <span>{title}</span>
+
+          <div
+            className={`meal-status ${
+              meal.available
+                ? "available"
+                : "unavailable"
+            }`}
+          >
+            {meal.available
+              ? "Available"
+              : "Unavailable"}
+          </div>
+        </div>
+
+        <h4>{meal.meal_name}</h4>
+
+        <p className="weekly-meal-description">
+          {meal.description}
+        </p>
+
+        <div className="weekly-meal-footer">
+          <div>
+            <span>PRICE</span>
+            <strong>
+              ₹
+              {Number(meal.price).toLocaleString(
+                "en-IN"
+              )}
+            </strong>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // =========================================================
+  // LOADING
   // =========================================================
 
   if (loading) {
     return (
       <div className="menu-management-page">
-
         <div className="menu-loading-box">
-
           <div className="menu-loading-line"></div>
 
-          <h2>
-            Loading your menu
-          </h2>
+          <h2>Loading Weekly Menu</h2>
 
           <p>
-            Please wait while we load your
-            menu items.
+            Please wait while we load your menu.
           </p>
-
         </div>
-
       </div>
     );
   }
 
+  // =========================================================
+  // PAGE
+  // =========================================================
+
   return (
     <div className="menu-management-page">
-
       <div className="menu-management-container">
 
         {/* =================================================
@@ -502,36 +584,32 @@ function MenuManagement() {
         ================================================= */}
 
         <div className="menu-page-header">
-
           <div>
-
             <span className="menu-page-label">
               MENU MANAGEMENT
             </span>
 
-            <h1>
-              Manage Your Menu
-            </h1>
+            <h1>Manage Your Weekly Menu</h1>
 
             <p>
-              Add, update and manage the meals
-              served by your mess.
+              Add and manage Lunch and Dinner for
+              each day of your weekly menu.
             </p>
-
           </div>
 
           <div className="menu-count-card">
+            <span>WEEKLY MEALS</span>
 
-            <span>
-              TOTAL MEALS
-            </span>
+            <strong>{getTotalMeals()}</strong>
 
-            <strong>
-              {menuItems.length}
-            </strong>
-
+            <small>
+              {menuItems.length}{" "}
+              {menuItems.length === 1
+                ? "day"
+                : "days"}{" "}
+              configured
+            </small>
           </div>
-
         </div>
 
         {/* =================================================
@@ -539,27 +617,17 @@ function MenuManagement() {
         ================================================= */}
 
         {error && (
-
           <div className="menu-message menu-error">
-
             <div className="menu-message-icon">
               !
             </div>
 
             <div>
+              <strong>Something went wrong</strong>
 
-              <strong>
-                Something went wrong
-              </strong>
-
-              <p>
-                {error}
-              </p>
-
+              <p>{error}</p>
             </div>
-
           </div>
-
         )}
 
         {/* =================================================
@@ -567,63 +635,49 @@ function MenuManagement() {
         ================================================= */}
 
         {successMessage && (
-
           <div className="menu-message menu-success">
-
             <div className="menu-message-icon">
               ✓
             </div>
 
             <div>
+              <strong>Success</strong>
 
-              <strong>
-                Success
-              </strong>
-
-              <p>
-                {successMessage}
-              </p>
-
+              <p>{successMessage}</p>
             </div>
-
           </div>
-
         )}
 
         {/* =================================================
-            ADD / EDIT FORM
+            ADD / EDIT WEEKLY MENU
         ================================================= */}
 
         <section className="menu-form-card">
 
           <div className="menu-section-heading">
-
             <div className="menu-section-number">
-              {editingMealId ? "02" : "01"}
+              {editingMenuId ? "02" : "01"}
             </div>
 
             <div>
-
               <span>
-                {editingMealId
-                  ? "EDIT MENU ITEM"
-                  : "ADD NEW MENU ITEM"}
+                {editingMenuId
+                  ? "EDIT DAILY MENU"
+                  : "ADD DAILY MENU"}
               </span>
 
               <h2>
-                {editingMealId
-                  ? "Update meal details"
-                  : "Create a new meal"}
+                {editingMenuId
+                  ? "Update your daily menu"
+                  : "Create a daily menu"}
               </h2>
 
               <p>
-                {editingMealId
-                  ? "Update the information of this menu item."
-                  : "Enter the details of the meal you want to serve."}
+                Set Lunch and Dinner for one day.
+                You can also mark the day as a
+                holiday.
               </p>
-
             </div>
-
           </div>
 
           <form
@@ -631,157 +685,328 @@ function MenuManagement() {
             onSubmit={handleSubmit}
           >
 
-            <div className="menu-form-row">
+            {/* DAY */}
 
-              {/* Meal Name */}
-
+            <div className="menu-day-selector">
               <div className="menu-form-field">
-
-                <label htmlFor="meal_name">
-                  Meal Name
-                </label>
-
-                <input
-                  id="meal_name"
-                  name="meal_name"
-                  type="text"
-                  placeholder="Example: Veg Thali"
-                  value={formData.meal_name}
-                  onChange={handleChange}
-                  required
-                />
-
-              </div>
-
-              {/* Meal Type */}
-
-              <div className="menu-form-field">
-
-                <label htmlFor="meal_type">
-                  Meal Type
+                <label htmlFor="day">
+                  Select Day
                 </label>
 
                 <select
-                  id="meal_type"
-                  name="meal_type"
-                  value={formData.meal_type}
-                  onChange={handleChange}
-                  required
+                  id="day"
+                  value={formData.day}
+                  onChange={handleDayChange}
+                  disabled={saving}
                 >
-
-                  <option value="Breakfast">
-                    Breakfast
-                  </option>
-
-                  <option value="Lunch">
-                    Lunch
-                  </option>
-
-                  <option value="Dinner">
-                    Dinner
-                  </option>
-
-                  <option value="Other">
-                    Other
-                  </option>
-
+                  {DAYS.map((day) => (
+                    <option
+                      key={day}
+                      value={day}
+                    >
+                      {formatDay(day)}
+                    </option>
+                  ))}
                 </select>
-
               </div>
 
-            </div>
+              <label className="holiday-toggle">
+                <input
+                  type="checkbox"
+                  checked={formData.holiday}
+                  onChange={handleHolidayChange}
+                  disabled={saving}
+                />
 
-            {/* Description */}
+                <span className="holiday-checkbox">
+                  {formData.holiday ? "✓" : ""}
+                </span>
 
-            <div className="menu-form-field">
-
-              <label htmlFor="description">
-                Description
+                <span>
+                  Mark as Holiday
+                </span>
               </label>
-
-              <textarea
-                id="description"
-                name="description"
-                rows="4"
-                placeholder="Example: Rice, dal, roti, sabji and salad"
-                value={formData.description}
-                onChange={handleChange}
-                required
-              />
-
             </div>
 
-            <div className="menu-form-row">
+            {/* HOLIDAY MESSAGE */}
 
-              {/* Price */}
-
-              <div className="menu-form-field">
-
-                <label htmlFor="price">
-                  Price
-                </label>
-
-                <div className="menu-price-input">
-
-                  <span>
-                    ₹
-                  </span>
-
-                  <input
-                    id="price"
-                    name="price"
-                    type="number"
-                    min="0.01"
-                    step="0.01"
-                    placeholder="80"
-                    value={formData.price}
-                    onChange={handleChange}
-                    required
-                  />
-
+            {formData.holiday ? (
+              <div className="holiday-message">
+                <div className="holiday-message-icon">
+                  H
                 </div>
 
+                <div>
+                  <strong>
+                    {formatDay(formData.day)} is a
+                    holiday
+                  </strong>
+
+                  <p>
+                    No Lunch or Dinner will be
+                    scheduled for this day.
+                  </p>
+                </div>
               </div>
+            ) : (
+              <>
+                {/* =================================================
+                    LUNCH
+                ================================================= */}
 
-              {/* Availability */}
+                <div className="meal-form-section">
 
-              <div className="menu-form-field">
+                  <div className="meal-form-header">
+                    <div>
+                      <span className="meal-form-label">
+                        MEAL 01
+                      </span>
 
-                <label>
-                  Availability
-                </label>
+                      <h3>Lunch</h3>
 
-                <label className="menu-availability-toggle">
+                      <p>
+                        Enter the lunch served on{" "}
+                        {formatDay(formData.day)}.
+                      </p>
+                    </div>
+                  </div>
 
-                  <input
-                    type="checkbox"
-                    name="available"
-                    checked={formData.available}
-                    onChange={handleChange}
-                  />
+                  <div className="meal-form-grid">
 
-                  <span className="menu-toggle-slider"></span>
+                    <div className="menu-form-field">
+                      <label htmlFor="lunch_meal_name">
+                        Meal Name
+                      </label>
 
-                  <span className="menu-toggle-text">
+                      <input
+                        id="lunch_meal_name"
+                        type="text"
+                        placeholder="Example: Dal Rice"
+                        value={
+                          formData.lunch.meal_name
+                        }
+                        onChange={(event) =>
+                          handleMealChange(
+                            "lunch",
+                            "meal_name",
+                            event.target.value
+                          )
+                        }
+                        disabled={saving}
+                      />
+                    </div>
 
-                    {formData.available
-                      ? "Available"
-                      : "Currently unavailable"}
+                    <div className="menu-form-field">
+                      <label htmlFor="lunch_price">
+                        Price
+                      </label>
 
-                  </span>
+                      <div className="menu-price-input">
+                        <span>₹</span>
 
-                </label>
+                        <input
+                          id="lunch_price"
+                          type="number"
+                          min="0.01"
+                          step="0.01"
+                          placeholder="80"
+                          value={
+                            formData.lunch.price
+                          }
+                          onChange={(event) =>
+                            handleMealChange(
+                              "lunch",
+                              "price",
+                              event.target.value
+                            )
+                          }
+                          disabled={saving}
+                        />
+                      </div>
+                    </div>
+                  </div>
 
-              </div>
+                  <div className="menu-form-field">
+                    <label htmlFor="lunch_description">
+                      Description
+                    </label>
 
-            </div>
+                    <textarea
+                      id="lunch_description"
+                      rows="3"
+                      placeholder="Example: Rice, dal, roti, sabji and salad"
+                      value={
+                        formData.lunch.description
+                      }
+                      onChange={(event) =>
+                        handleMealChange(
+                          "lunch",
+                          "description",
+                          event.target.value
+                        )
+                      }
+                      disabled={saving}
+                    />
+                  </div>
 
-            {/* Form Buttons */}
+                  <label className="meal-availability">
+                    <input
+                      type="checkbox"
+                      checked={
+                        formData.lunch.available
+                      }
+                      onChange={() =>
+                        handleAvailabilityChange(
+                          "lunch"
+                        )
+                      }
+                      disabled={saving}
+                    />
+
+                    <span className="availability-box">
+                      {formData.lunch.available
+                        ? "✓"
+                        : ""}
+                    </span>
+
+                    <span>
+                      Lunch is available
+                    </span>
+                  </label>
+                </div>
+
+                {/* =================================================
+                    DINNER
+                ================================================= */}
+
+                <div className="meal-form-section">
+
+                  <div className="meal-form-header">
+                    <div>
+                      <span className="meal-form-label">
+                        MEAL 02
+                      </span>
+
+                      <h3>Dinner</h3>
+
+                      <p>
+                        Enter the dinner served on{" "}
+                        {formatDay(formData.day)}.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="meal-form-grid">
+
+                    <div className="menu-form-field">
+                      <label htmlFor="dinner_meal_name">
+                        Meal Name
+                      </label>
+
+                      <input
+                        id="dinner_meal_name"
+                        type="text"
+                        placeholder="Example: Paneer Roti"
+                        value={
+                          formData.dinner.meal_name
+                        }
+                        onChange={(event) =>
+                          handleMealChange(
+                            "dinner",
+                            "meal_name",
+                            event.target.value
+                          )
+                        }
+                        disabled={saving}
+                      />
+                    </div>
+
+                    <div className="menu-form-field">
+                      <label htmlFor="dinner_price">
+                        Price
+                      </label>
+
+                      <div className="menu-price-input">
+                        <span>₹</span>
+
+                        <input
+                          id="dinner_price"
+                          type="number"
+                          min="0.01"
+                          step="0.01"
+                          placeholder="80"
+                          value={
+                            formData.dinner.price
+                          }
+                          onChange={(event) =>
+                            handleMealChange(
+                              "dinner",
+                              "price",
+                              event.target.value
+                            )
+                          }
+                          disabled={saving}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="menu-form-field">
+                    <label htmlFor="dinner_description">
+                      Description
+                    </label>
+
+                    <textarea
+                      id="dinner_description"
+                      rows="3"
+                      placeholder="Example: Paneer sabji, roti and salad"
+                      value={
+                        formData.dinner.description
+                      }
+                      onChange={(event) =>
+                        handleMealChange(
+                          "dinner",
+                          "description",
+                          event.target.value
+                        )
+                      }
+                      disabled={saving}
+                    />
+                  </div>
+
+                  <label className="meal-availability">
+                    <input
+                      type="checkbox"
+                      checked={
+                        formData.dinner.available
+                      }
+                      onChange={() =>
+                        handleAvailabilityChange(
+                          "dinner"
+                        )
+                      }
+                      disabled={saving}
+                    />
+
+                    <span className="availability-box">
+                      {formData.dinner.available
+                        ? "✓"
+                        : ""}
+                    </span>
+
+                    <span>
+                      Dinner is available
+                    </span>
+                  </label>
+                </div>
+              </>
+            )}
+
+            {/* FORM BUTTONS */}
 
             <div className="menu-form-actions">
 
-              {editingMealId && (
-
+              {editingMenuId && (
                 <button
                   type="button"
                   className="menu-cancel-button"
@@ -790,7 +1015,6 @@ function MenuManagement() {
                 >
                   Cancel
                 </button>
-
               )}
 
               <button
@@ -798,148 +1022,98 @@ function MenuManagement() {
                 className="menu-submit-button"
                 disabled={saving}
               >
-
                 {saving
                   ? "Saving..."
-                  : editingMealId
-                  ? "Update Menu Item"
-                  : "Add Menu Item"}
+                  : editingMenuId
+                  ? "Update Day Menu"
+                  : "Save Day Menu"}
 
                 {!saving && (
-                  <span>
-                    →
-                  </span>
+                  <span>→</span>
                 )}
-
               </button>
-
             </div>
-
           </form>
-
         </section>
 
         {/* =================================================
-            CURRENT MENU
+            WEEKLY MENU
         ================================================= */}
 
         <section className="menu-list-section">
 
           <div className="menu-list-heading">
-
             <div>
-
               <span className="menu-page-label">
                 YOUR MENU
               </span>
 
-              <h2>
-                Current Menu
-              </h2>
+              <h2>Weekly Menu</h2>
 
               <p>
-                View and manage all meals currently
-                added to your mess.
+                View and manage your Lunch and Dinner
+                for each day.
               </p>
-
             </div>
 
             <div className="menu-total-items">
-
               {menuItems.length}
 
               <span>
                 {menuItems.length === 1
-                  ? " Meal"
-                  : " Meals"}
+                  ? " Day"
+                  : " Days"}
               </span>
-
             </div>
-
           </div>
 
           {menuItems.length === 0 ? (
-
             <div className="menu-empty-state">
-
               <div className="menu-empty-icon">
                 MENU
               </div>
 
               <h3>
-                No Menu Items Yet
+                No Weekly Menu Yet
               </h3>
 
               <p>
-                You haven't added any meals to your
-                menu. Add your first meal using the
-                form above.
+                You haven't added any daily menus.
+                Start by creating your first day
+                above.
               </p>
-
             </div>
-
           ) : (
-
-            <div className="menu-items-grid">
-
+            <div className="weekly-menu-list">
               {menuItems.map((item) => (
-
                 <article
-                  className="menu-item-card"
-                  key={item.meal_id}
+                  className={`weekly-day-card ${
+                    item.holiday
+                      ? "holiday-day-card"
+                      : ""
+                  }`}
+                  key={item.menu_id}
                 >
 
-                  <div className="menu-item-top">
+                  <div className="weekly-day-header">
 
                     <div>
-
-                      <span className="menu-item-type">
-                        {item.meal_type}
+                      <span className="weekly-day-label">
+                        WEEKLY MENU
                       </span>
 
                       <h3>
-                        {item.meal_name}
+                        {formatDay(item.day)}
                       </h3>
-
                     </div>
 
-                    <div
-                      className={`menu-item-status ${
-                        item.available
-                          ? "available"
-                          : "unavailable"
-                      }`}
-                    >
-                      {item.available
-                        ? "Available"
-                        : "Unavailable"}
-                    </div>
+                    <div className="weekly-day-actions">
 
-                  </div>
-
-                  <p className="menu-item-description">
-                    {item.description}
-                  </p>
-
-                  <div className="menu-item-divider"></div>
-
-                  <div className="menu-item-bottom">
-
-                    <div className="menu-item-price">
-
-                      <span>
-                        PRICE
-                      </span>
-
-                      <strong>
-                        ₹{Number(
-                          item.price
-                        ).toFixed(2)}
-                      </strong>
-
-                    </div>
-
-                    <div className="menu-item-actions">
+                      {item.holiday && (
+                        <span className="holiday-badge">
+                          Holiday
+                        </span>
+                      )}
 
                       <button
                         type="button"
@@ -956,29 +1130,60 @@ function MenuManagement() {
                         className="menu-delete-button"
                         onClick={() =>
                           handleDelete(
-                            item.meal_id
+                            item.menu_id
                           )
                         }
+                        disabled={
+                          deletingId ===
+                          item.menu_id
+                        }
                       >
-                        Delete
+                        {deletingId ===
+                        item.menu_id
+                          ? "Deleting..."
+                          : "Delete"}
                       </button>
-
                     </div>
-
                   </div>
 
+                  {item.holiday ? (
+                    <div className="holiday-display">
+                      <div className="holiday-display-icon">
+                        H
+                      </div>
+
+                      <div>
+                        <strong>
+                          Holiday
+                        </strong>
+
+                        <p>
+                          No Lunch or Dinner is
+                          scheduled for this day.
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="weekly-meals-grid">
+
+                      <MealCard
+                        title="Lunch"
+                        meal={item.lunch}
+                      />
+
+                      <MealCard
+                        title="Dinner"
+                        meal={item.dinner}
+                      />
+
+                    </div>
+                  )}
                 </article>
-
               ))}
-
             </div>
-
           )}
-
         </section>
-
       </div>
-
     </div>
   );
 }

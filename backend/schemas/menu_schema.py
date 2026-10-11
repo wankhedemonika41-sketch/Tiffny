@@ -1,27 +1,32 @@
 from pydantic import BaseModel, Field
+from typing import Optional
 
 
-class MenuCreateSchema(BaseModel):
+class MealSchema(BaseModel):
     meal_name: str
     description: str
-    meal_type: str
     price: float = Field(gt=0)
     available: bool = True
 
 
+class MenuCreateSchema(BaseModel):
+    day: str
+    lunch: Optional[MealSchema] = None
+    dinner: Optional[MealSchema] = None
+    holiday: bool = False
+
+
 class MenuUpdateSchema(BaseModel):
-    meal_name: str
-    description: str
-    meal_type: str
-    price: float = Field(gt=0)
-    available: bool
+    day: str
+    lunch: Optional[MealSchema] = None
+    dinner: Optional[MealSchema] = None
+    holiday: bool = False
 
 
 class MenuResponseSchema(BaseModel):
-    meal_id: str
+    menu_id: str
     mess_id: str
-    meal_name: str
-    description: str
-    meal_type: str
-    price: float
-    available: bool
+    day: str
+    lunch: Optional[MealSchema] = None
+    dinner: Optional[MealSchema] = None
+    holiday: bool

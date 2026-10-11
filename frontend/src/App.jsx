@@ -1,14 +1,11 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-} from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
 
 import StudentRegister from "./pages/StudentRegister/StudentRegister";
 import StudentDashboard from "./pages/Student/StudentDashboard";
+import StudentOrder from "./pages/StudentOrder/StudentOrder";
 
 import MessRegister from "./pages/MessRegister/MessRegister";
 
@@ -25,6 +22,12 @@ import ReviewsManagement from "./pages/MessOwner/ReviewsManagement";
 import Messes from "./pages/Messes/Messes";
 import MessDetails from "./pages/MessDetails/MessDetails";
 
+import StudentOrderHistory from "./pages/StudentOrderHistory/StudentOrderHistory";
+import StudentPayment from "./pages/StudentPayment/StudentPayment";
+import MakePayment from "./pages/StudentPayment/MakePayment";
+
+import StudentProfile from "./pages/Student/StudentProfile";
+
 import AdminLayout from "./pages/Admin/AdminLayout";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import ApprovedMesses from "./pages/Admin/ApprovedMesses";
@@ -32,185 +35,111 @@ import RejectedMesses from "./pages/Admin/RejectedMesses";
 import SuspendedMesses from "./pages/Admin/SuspendedMesses";
 import PendingMesses from "./pages/Admin/PendingMesses";
 
-
 function App() {
   return (
     <BrowserRouter>
-
       <Routes>
-
         {/* =================================================
             PUBLIC PAGES
         ================================================= */}
 
-        <Route
-          path="/"
-          element={<Home />}
-        />
+        <Route path="/" element={<Home />} />
 
-        <Route
-          path="/login"
-          element={<Login />}
-        />
+        <Route path="/login" element={<Login />} />
 
-        <Route
-          path="/register/student"
-          element={<StudentRegister />}
-        />
+        <Route path="/register/student" element={<StudentRegister />} />
 
-        <Route
-          path="/register/mess"
-          element={<MessRegister />}
-        />
+        <Route path="/register/mess" element={<MessRegister />} />
 
-        <Route
-          path="/messes"
-          element={<Messes />}
-        />
+        <Route path="/messes" element={<Messes />} />
 
-        <Route
-          path="/messes/:messId"
-          element={<MessDetails />}
-        />
+        <Route path="/messes/:messId" element={<MessDetails />} />
 
+        <Route path="/student/make-payment" element={<MakePayment />} />
 
         {/* =================================================
             STUDENT AREA
         ================================================= */}
 
+        <Route path="/student/dashboard" element={<StudentDashboard />} />
+
+        <Route path="/student/order" element={<StudentOrder />} />
+
         <Route
-          path="/student/dashboard"
-          element={<StudentDashboard />}
+          path="/student/order-history"
+          element={<StudentOrderHistory />}
         />
 
+        <Route path="/student/orders" element={<StudentOrderHistory />} />
+
+        <Route path="/student/payment" element={<StudentPayment />} />
+
+        <Route path="/student/profile" element={<StudentProfile />} />
 
         {/* =================================================
             MESS OWNER AREA
         ================================================= */}
 
-        <Route
-          path="/mess"
-          element={<MessOwnerLayout />}
-        >
-
+        <Route path="/mess" element={<MessOwnerLayout />}>
           {/* Dashboard */}
 
-          <Route
-            path="dashboard"
-            element={<MessDashboard />}
-          />
-
+          <Route path="dashboard" element={<MessDashboard />} />
 
           {/* Mess Profile */}
 
-          <Route
-            path="profile"
-            element={<MessProfile />}
-          />
-
+          <Route path="profile" element={<MessProfile />} />
 
           {/* Edit Mess Profile */}
 
-          <Route
-            path="profile/edit"
-            element={<MessProfile />}
-          />
-
+          <Route path="profile/edit" element={<MessProfile />} />
 
           {/* Menu Management */}
 
-          <Route
-            path="menu"
-            element={<MenuManagement />}
-          />
-
+          <Route path="menu" element={<MenuManagement />} />
 
           {/* Capacity Management */}
 
-          <Route
-            path="capacity"
-            element={<CapacityManagement />}
-          />
-
+          <Route path="capacity" element={<CapacityManagement />} />
 
           {/* Monthly Price Management */}
 
-          <Route
-            path="monthly-price"
-            element={<PricingManagement />}
-          />
-
+          <Route path="monthly-price" element={<PricingManagement />} />
 
           {/* Orders Management */}
 
-          <Route
-            path="orders"
-            element={<OrdersManagement />}
-          />
-
+          <Route path="orders" element={<OrdersManagement />} />
 
           {/* Reviews Management */}
 
-          <Route
-            path="reviews"
-            element={<ReviewsManagement />}
-          />
-
+          <Route path="reviews" element={<ReviewsManagement />} />
         </Route>
-
 
         {/* =================================================
             ADMIN AREA
         ================================================= */}
 
-        <Route
-          path="/admin"
-          element={<AdminLayout />}
-        >
-
+        <Route path="/admin" element={<AdminLayout />}>
           {/* Admin Dashboard */}
 
-          <Route
-            path="dashboard"
-            element={<AdminDashboard />}
-          />
-
+          <Route path="dashboard" element={<AdminDashboard />} />
 
           {/* Approved Messes */}
 
-          <Route
-            path="approved-messes"
-            element={<ApprovedMesses />}
-          />
-
+          <Route path="approved-messes" element={<ApprovedMesses />} />
 
           {/* Rejected Messes */}
 
-          <Route
-            path="rejected-messes"
-            element={<RejectedMesses />}
-          />
-
+          <Route path="rejected-messes" element={<RejectedMesses />} />
 
           {/* Suspended Messes */}
 
-          <Route
-            path="suspended-messes"
-            element={<SuspendedMesses />}
-          />
-
+          <Route path="suspended-messes" element={<SuspendedMesses />} />
 
           {/* Pending Messes */}
 
-          <Route
-            path="pending-messes"
-            element={<PendingMesses />}
-          />
-
+          <Route path="pending-messes" element={<PendingMesses />} />
         </Route>
-
       </Routes>
-
     </BrowserRouter>
   );
 }

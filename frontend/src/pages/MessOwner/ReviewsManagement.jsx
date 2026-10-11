@@ -13,7 +13,7 @@ function ReviewsManagement() {
   }, []);
 
   async function fetchReviews() {
-    const token = localStorage.getItem("tiffny_token");
+    const token = sessionStorage.getItem("tiffny_token");
 
     if (!token) {
       setError("Login token not found. Please login again.");

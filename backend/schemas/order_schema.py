@@ -8,8 +8,8 @@ from typing import Optional
 
 class OrderCreateSchema(BaseModel):
     mess_id: str
-    meal_id: str
     plan_type: str
+    meal_slot: Optional[str] = None
     meal_mode: str
     location: Optional[str] = None
 
@@ -22,12 +22,16 @@ class OrderResponseSchema(BaseModel):
     order_id: str
     student_id: str
     mess_id: str
-    meal_id: str
+    day: str
+    meal_slot: str
+    meal_name: str
     plan_type: str
     meal_mode: str
     price: float
     location: Optional[str] = None
     status: str
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
 
 
 # =========================================================
@@ -38,7 +42,8 @@ class OrderHistoryResponseSchema(BaseModel):
     order_id: str
     mess_id: str
     mess_name: str
-    meal_id: str
+    day: str
+    meal_slot: str
     meal_name: str
     plan_type: str
     meal_mode: str
@@ -46,6 +51,12 @@ class OrderHistoryResponseSchema(BaseModel):
     location: Optional[str] = None
     status: str
     created_at: str
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+
+    # Monthly plan dates
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
 
 
 # =========================================================
@@ -56,7 +67,8 @@ class ActiveMealPlanResponseSchema(BaseModel):
     order_id: str
     mess_id: str
     mess_name: str
-    meal_id: str
+    day: str
+    meal_slot: str
     meal_name: str
     plan_type: str
     meal_mode: str
@@ -64,10 +76,12 @@ class ActiveMealPlanResponseSchema(BaseModel):
     location: Optional[str] = None
     status: str
     created_at: str
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
 
 
 # =========================================================
-# MESS OWNER ORDER VIEW
+# MESS OWNER → VIEW ORDERS
 # =========================================================
 
 class MessOrderResponseSchema(BaseModel):
@@ -75,7 +89,8 @@ class MessOrderResponseSchema(BaseModel):
     student_id: str
     student_name: str
     student_phone: str
-    meal_id: str
+    day: str
+    meal_slot: str
     meal_name: str
     plan_type: str
     meal_mode: str
@@ -83,6 +98,10 @@ class MessOrderResponseSchema(BaseModel):
     location: Optional[str] = None
     status: str
     created_at: str
+
+    # Monthly plan dates
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
 
 
 # =========================================================
